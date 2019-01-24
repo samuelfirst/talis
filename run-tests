@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# python -m virtualenv env
+# source env/bin/activate
+# pip install
+# ./run-tests
+
+clear_trash() {
+    local trash='.pytest_cache'
+    [ -d "$trash" ] && echo "removing ${trash} testing trash" && rm -rf ${trash} && echo "environment is cleared"
+}
+
+clear_pyc() {
+    find . -name '*.pyc' -delete && echo "removing pyc"
+}
+
+pip_install() {
+    pip install -r requirements.txt
+}
+
+run_tests() {
+    pip_install
+    pytest
+    clear_trash
+    clear_pyc
+}
+
+run_tests
