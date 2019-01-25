@@ -1,18 +1,20 @@
-import sys, logging, os
 
-from talis import Main
+from __future__ import print_function
+
+from talis import TwitchChat
+
+import argparse
+import time
+import logging
+import os
+import sys
 
 HOST_NAME = "irc.chat.twitch.tv"
 PORT = 6667
 BOT_NAME = "talis_jtk"
 OAUTH_TOKEN_FILE = '.oauth'
-
-# The IRC imposes a 20 second message/command limit
-# within a 30 second window
 RATE_LIMIT = 20
 RATE_LIMIT_TIME = 30000
-
-# DEBUG, INFO, WARNING, ERROR, CRITICAL
 LOG_LEVEL = logging.DEBUG
 
 oauth_exists = os.path.isfile(OAUTH_TOKEN_FILE)
@@ -45,14 +47,31 @@ f = open(OAUTH_TOKEN_FILE, 'r')
 OAUTH_TOKEN = f.readline().rstrip(" \n")
 f.close()
 
-config["oauth"] = OAUTH_TOKEN.lstrip("oauth:")
+config["oauth"] = OAUTH_TOKEN
+
 
 if __name__ == "__main__":
     _l.info("=== Bot Started ===")
     _l.info("LOG LEVEL: {}".format(config['log_level']))
 
     (channel,) = sys.argv[1:]
-    config['channel'] = channel
 
-    client = Main(config=config).start()
-    client.handle_forever()
+    with TwitchChat(username=BOT_NAME,
+                          oauth=OAUTH_TOKEN,
+                          channel=channel,
+                          verbose=False) as chatstream:
+
+        if channel.upper() == "JONTHOMASK":
+            print("sending message")
+            chatstream.send_chat_message("SURPRISE MOTHA FUCKA!")
+
+        try:
+            while True:
+                received = chatstream.twitch_receive_messages()
+                if received:
+                    username = received[0]["username"]
+                    msg = received[0]["message"]
+                    print("{0}: {1}".format(username, msg))
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Goodbye\n")

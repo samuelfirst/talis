@@ -1,12 +1,5 @@
-###
-# What I am doing:
-###
-
-
-1. We connected with irc.bot - simple
 
 Todo:
-    Update my code to handle itself (2 hours)
     Import Kafka, create topic, inject messages into topic
 
     Setup docker:
