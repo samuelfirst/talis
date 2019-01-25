@@ -6,7 +6,7 @@ services:
             context: .
             dockerfile: ./docker/app/Dockerfile
         container_name: talis_app
-        command: ./wait-for.sh kafka:9092 -- python twwitch_message_producer.py ${CHANNEL}
+        command: ./wait-for.sh kafka:9092 -- python twitch_message_producer.py ${CHANNEL}
         ports:
             - "5000:5000"
         depends_on:
@@ -32,3 +32,5 @@ services:
         environment:
             KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
             ZOOKEEPER_IP: ${HOST_IP}
+            #KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka0:29092,OUTSIDE://localhost:9092
+            #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT

@@ -1,14 +1,15 @@
 
-from .talis.config import *
-from .talis.log import log
-from kafka import KafkaConsumer, KafkaProducer
-from kafka.errors import NoBrokersAvailable
-
-from talis import TwitchChat
-
-import os
 import time
 import collections
+
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from talis.config import *
+from talis.log import log
+
+from kafka import KafkaConsumer, KafkaProducer
+from kafka.errors import NoBrokersAvailable
 
 consumer_name = "Spam"
 distribution_length_ms = 10000
@@ -17,9 +18,9 @@ unique_threshold = .40
 kafka_offset = "end"
 
 def log_info(msg):
-    return "AI {0}: {1}".format(consumer_name, msg)
+    print("AI {0}: {1}".format(consumer_name, msg))
 
-if test:
+if True:
     host = "localhost:9092"
 else:
     host = os.getenv("KAFKA_BOOTSTRAP_HOST")
@@ -57,7 +58,9 @@ def calculates_unique_distribution():
     bin_len = len(message_bin)
     unique = len(list(set(message_bin)))
 
-    return unique_perc = unique//bin_len
+    log_info("Bin Len {0}, Unique {1}".format(bin_len, unique))
+
+    return unique//bin_len
 
 def send_bot_message():
     counter=collections.Counter(message_bin)
@@ -69,6 +72,7 @@ def send_bot_message():
         exit("Something happened.")
 
 for msg in consumer:
+    log_info("Adding message to bin: {0}".format(msg.value))
     message_bin.append(msg.value)
     end_time = time.time()
     diff = end_time - start_time
