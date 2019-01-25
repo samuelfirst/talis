@@ -1,10 +1,14 @@
-
+'''
+This producer will join a twitch IRC CHANNEL
+${CHANNEL} and pipe the messages to kafka
+on ${KAFKA_TOPIC}
+'''
 from __future__ import print_function
 
 from talis.config import *
 from talis.log import log
+from talis.twitch_chat import TwitchChat
 
-from talis import TwitchChat
 from kafka import KafkaProducer, KafkaAdminClient
 from kafka.errors import NoBrokersAvailable
 
@@ -15,10 +19,7 @@ import os
 if __name__ == "__main__":
     log.info("=== Bot Started ===")
     log.info("LOG LEVEL: {}".format(os.getenv("LOG_LEVEL")))
-
     log.info("REGISTERING as PRODUCER: {}".format(os.getenv("KAFKA_BOOTSTRAP_HOST")))
-
-    log.info("created topic {}".format(os.getenv("KAFKA_TOPIC")))
 
     producer = KafkaProducer(bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_HOST"))
 
@@ -28,11 +29,6 @@ if __name__ == "__main__":
                           oauth=os.getenv("OAUTH_TOKEN"),
                           channel=channel,
                           verbose=False) as chatstream:
-
-        if channel.upper() == "JONTHOMASK":
-            log.info("sending message")
-            chatstream.send_chat_message("SURPRISE MOTHA FUCKA!")
-
         try:
             while True:
                 received = chatstream.twitch_receive_messages()

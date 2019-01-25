@@ -1,6 +1,11 @@
 
 
-NEED to create ttopic if it doesnt existt
+./bin/kafka-topics.sh \
+--zookeeper localhost:2181 \
+--alter --topic my-topic \
+--config retention.minutes=1
+
+
 
 mount persistant storage for kafka
 
