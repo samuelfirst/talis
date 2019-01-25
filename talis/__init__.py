@@ -5,6 +5,8 @@ import fcntl
 import os
 import errno
 
+from .log import log
+
 class TwitchChat(object):
 
     def __init__(self, username, oauth, channel="", verbose=False):

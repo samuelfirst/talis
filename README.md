@@ -34,3 +34,21 @@ Other codebases:
 # IRC Client Spec
 # https://modern.ircdocs.horse/
 # https://modern.ircdocs.horse/#connection-registration
+
+
+Main Website APP
+
+    producer
+        push a "event" UserRegister {'username'}
+
+RegisterService
+    connects kafka and llistens for "userRegister"
+    pipe out EmailUser {}
+
+EmailService
+    listen for "Email" {}
+
+twitch chat messages
+
+connects to kafka on message event
+    create a new topic

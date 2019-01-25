@@ -1,0 +1,71 @@
+
+
+NEED to create ttopic if it doesnt existt
+
+mount persistant storage for kafka
+
+-----
+
+
+# https://medium.com/@itseranga/kafka-and-zookeeper-with-docker-65cff2c2c34f
+
+Run a zookeeper container:
+
+docker run -d \
+--name zookeeper \
+-p 2181:2181 \
+jplock/zookeeper
+
+
+Run kafka and pass in advertise address and zookeeper address
+docker run -d \
+--name kafka \
+-p 7203:7203 \
+-p 9092:9092 \
+-e KAFKA_ADVERTISED_HOST_NAME=192.168.1.2 \
+-e ZOOKEEPER_IP=192.168.1.2 \
+ches/kafka
+
+
+
+PYTHON acces:
+
+Create topic
+
+docker run \
+--rm talis_kafka kafka-topics.sh \
+--create \
+--topic twitch_message \
+--replication-factor 1 \
+--partitions 1 \
+--zookeeper 192.168.1.2
+
+docker exec -it ccaf2f95d3f5 kafka-topics.sh \
+--create \
+--topic twitc_message \
+--replication-factor 1 \
+--partitions 1 \
+--zookeeper 192.168.1.2:21
+
+
+
+Create a producer
+
+docker run --rm --interactive \
+ches/kafka kafka-console-producer.sh \
+--topic senz \
+--broker-list 192.168.1.2:9092
+
+
+
+
+BOT / consumer of kafka
+    bot_message
+
+
+Producer just pipes irc kafka
+    twitch_message
+
+consumer for spam participation
+    twitch_message
+    bot_message {command}
