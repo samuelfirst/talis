@@ -16,11 +16,17 @@ import time
 import sys
 import os
 
+is_consumer = False
+
 if __name__ == "__main__":
     log.info("=== Bot Started ===")
     log.info("LOG LEVEL: {}".format(os.getenv("LOG_LEVEL")))
 
-    (channel, host) = sys.argv[1:]
+    if is_consumer:
+        (channel, host) = sys.argv[1:]
+    else:
+        channel = os.getenv("CHANNEL")
+        host = os.getenv("KAFKA_BOOTSTRAP_HOST")
 
     producer = KafkaProducer(bootstrap_servers=host)
     log.info("REGISTERING as PRODUCER: {}".format(os.getenv("KAFKA_BOOTSTRAP_HOST")))

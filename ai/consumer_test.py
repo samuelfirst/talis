@@ -16,8 +16,8 @@ from kafka.errors import NoBrokersAvailable
 
 try:
     consumer = KafkaConsumer(os.getenv("KAFKA_TOPIC"), bootstrap_servers="localhost:9092")
-    #consumer.topics()
-    #consumer.seek_to_beginning()
+    consumer.topics()
+    consumer.seek_to_beginning()
 except NoBrokersAvailable:
     exit("No brokers found")
 except:

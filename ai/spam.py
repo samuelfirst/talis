@@ -2,6 +2,9 @@
 This chat message consumer will make the bot more
 cancerous by participating in events where spam
 becomes highly concentrated
+
+Actually a Host Giveway "Feature"
+
 '''
 import time
 import collections
