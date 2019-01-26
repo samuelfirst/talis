@@ -1,6 +1,6 @@
 # Talis
 
-** Author: Jon Kirkpatrick**
+***Author: Jon Kirkpatrick***
 
 A Microservice'd Twitch Chat Bot that utilizes Docker, Kafka and Zookeeper.
 
@@ -20,6 +20,7 @@ AI/spam.py is an example service that attaches to the Kafka Topic "twitch_messag
 1. Get an oAuth token for your bot/user using the twitch password generator
 2. place the entire oauth:<token> text in the .oauth file
 3. update the channel name in the .env folder
+4. Run these commands:
 
 ```
 python -m virtualenv env
