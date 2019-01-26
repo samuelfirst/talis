@@ -2,11 +2,11 @@
 
 ***Author: Jon Kirkpatrick***
 
-A Microserviced NLP (Natural Language Processing) AI Twitch Chat Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
+A Microserviced NLP (Natural Language Processing) AI Twitch Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
 
 The general idea of the Bot was the ability to attach and detach "services" to the bot, at will, and dynamically, without destroying, disconnected and restarting the bot. The bot is highly fault-tolerant, in that the attached services have no "connection" or "knowledge" of the bot, and the bot has no knowledge of the services.
 
-The primary purpose to generate a bot that can interact and chat like a twitch user using NLP.
+The end goal is to generate a bot that can interact and chat like a "real" twitch user using NLP and the ability to attach and detach services on the fy.
 
 This is the next general step into creating a hive mind AI that can attach and disconnect micro-ai services at will.
 
