@@ -50,3 +50,4 @@ You may need to change a few "flags" in the twitch_message_producer and ai/* scr
 ## Todo:
 - [ ] private message response and @ responsesHub
 - [ ] ai/consumer_to_file.py  --> data/twitch_messages.txt (compress please)
+- [ ] The messages AI/spam.py sends to the bot is user input and not escapped properly. Create an interface to filter out piped messages
