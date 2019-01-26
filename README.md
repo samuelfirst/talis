@@ -43,7 +43,7 @@ You should see messages piping out to your console.
 python ai/consumer_test.py
 ```
 
-You may to change a few "flags" in the twitch_message_producer and ai/* scripts. I manually change certain flags to tell the script if im running on local or in docker.
+You may need to change a few "flags" in the twitch_message_producer and ai/* scripts. I manually change certain flags to tell the script if im running on local or in docker.
 
 ## Todo:
 - [ ] private message response and @ responsesHub
