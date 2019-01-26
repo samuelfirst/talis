@@ -6,6 +6,8 @@ A Microserviced Twitch Chat Bot written in Python 3 that utilizes Docker, Kafka 
 
 The general idea of the Bot was the ability to attach and detach "services" to the bot, at will, and dynamically, without destroying, disconnected and restarting the bot. The bot is highly fault-tolerant, in that the attached services have no "connection" or "knowledge" of the bot, and the bot has no knowledge of the services.
 
+The primary purpose to generate a bot that can interact and chat like a twitch user using NLP.
+
 This is the next general step into creating a hive mind AI that can attach and disconnect micro-ai services at will.
 
 ***Twitch Message Producer*** is the primary script ran inside of the python docker container. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file. This producer pipes the chat messages into a Kafka topic assigned in the .env file.
