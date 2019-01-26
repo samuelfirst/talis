@@ -17,8 +17,8 @@ from kafka.errors import NoBrokersAvailable
 
 consumer_name = "spam"
 distribution_length_ms = 10
-minimum_population = 40
-unique_threshold = .50
+minimum_population = 20
+unique_threshold = .5
 kafka_offset = "end"
 
 def log_info(msg):
@@ -39,24 +39,25 @@ except NoBrokersAvailable:
 except:
     pass
 
-
 message_bin = []
 start_time = time.time()
 
 forceReset = False
 
 def calculate_unique_distribution():
+
     bin_len = len(message_bin)
-    unique = len(list(set(message_bin)))
+    counter = collections.Counter(map(lambda x : x.lower(), message_bin))
+    most_common_count = counter.most_common(1)[0][1]
+    r = most_common_count/bin_len
+    log_info("{0:.2f}% of {1:.2f}% threshold".format(r*100, unique_threshold*100))
 
-    log_info("{2:.2f}% of {3:.2f}% threshold".format(unique, bin_len, 1-(unique/bin_len), unique_threshold*100))
-
-    return 1-(unique/bin_len)
+    return r
 
 def collapse_message(msg):
-    m_split = msg.decode('utf-8').split(" ")
+    m_split = msg.decode('utf-8').lower().split(" ")
     bin_len = len(m_split)
-    unique = len(list(set(m_split)))
+    unique = len(list(set(map(lambda x : x.lower(),m_split))))
     if bin_len > 1 and unique == 1:
         log_info("DUPLICATE SPAM {0}".format(msg, m_split[0]))
         return bytes(m_split[0], 'utf-8')
@@ -81,12 +82,12 @@ for msg in consumer:
         message_bin = []
     end_time = time.time()
     diff = end_time - start_time
-    if len(message_bin) < 40:
+    if len(message_bin) < minimum_population:
         log_info("accumulating bin {0:.2f}/seconds".format(diff))
     message_bin.append(collapse_message(msg.value))
+    unique_perc = calculate_unique_distribution()
     if len(message_bin) > minimum_population:
         message_bin.pop(0)
-        unique_perc = calculate_unique_distribution()
         if unique_perc > unique_threshold:
             forceReset = True
             if diff > distribution_length_ms:

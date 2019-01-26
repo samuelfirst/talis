@@ -1,5 +1,18 @@
 
 
+
+It seems like if you cancel the spam AI
+and sett new thresholds that it doesntt pick up
+on the new wtthershold or if it does it doesnt trigger
+
+
+
+
+
+
+
+
+
 ./bin/kafka-topics.sh \
 --zookeeper localhost:2181 \
 --alter --topic my-topic \

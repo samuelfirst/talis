@@ -12,6 +12,9 @@ from kafka.errors import NoBrokersAvailable
 
 consumer_name = "BOT"
 
+sent_messages = 0
+max_messages = 8
+
 def log_info(msg):
     print("AI {0}: {1}".format(consumer_name, msg))
 
@@ -20,19 +23,31 @@ if True:
 else:
     host = os.getenv("KAFKA_BOOTSTRAP_HOST")
 
-log_info("Connecting to {0}".format(host))
+log_info("Connecting to Kafka on: {0}".format(host))
 
 try:
-    consumer = KafkaConsumer(os.getenv("KAFKA_BOT_MESSAGE_TOPIC"), bootstrap_servers=host)
-    twitch_bot = TwitchChat(username=os.getenv("BOT_NAME"),
-                            oauth=os.getenv("OAUTH_TOKEN"),
-                            channel=os.getenv("CHANNEL"),
-                            verbose=False)
+    consumer = KafkaConsumer(os.getenv("KAFKA_BOT_MESSAGE_TOPIC"),
+                            bootstrap_servers=host,
+                            consumer_timeout_ms=400)
 except NoBrokersAvailable:
     exit("No brokers found")
 
 log_info("Connected to {0}".format(host))
 
-for msg in consumer:
-    log_info("Received Message to send to twitch: {0}".format(msg.value))
-    #twitch_bot.chatstream.send_chat_message(msg.value)
+with TwitchChat(username=os.getenv("TWITCH_BOT_NICK"),
+                oauth=os.getenv("TWITCH_BOT_OAUTH_TOKEN"),
+                channel=os.getenv("CHANNEL"),
+                verbose=False) as chatstream:
+    try:
+        while True:
+            received = chatstream.twitch_receive_messages()
+
+            for msg in consumer:
+                log_info("Received Message to send to twitch: {0}".format(msg.value))
+                if sent_messages > max_messages:
+                    exit("Sent too many messages {0}".format(sent_messages))
+                sent_messages += 1
+                chatstream.send_chat_message(msg.value.decode('utf-8'))
+                break
+    except KeyboardInterrupt:
+        log.info("Goodbye\n")

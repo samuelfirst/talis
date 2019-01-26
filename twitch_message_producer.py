@@ -19,15 +19,16 @@ import os
 if __name__ == "__main__":
     log.info("=== Bot Started ===")
     log.info("LOG LEVEL: {}".format(os.getenv("LOG_LEVEL")))
-    log.info("REGISTERING as PRODUCER: {}".format(os.getenv("KAFKA_BOOTSTRAP_HOST")))
 
     producer = KafkaProducer(bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_HOST"))
+    log.info("REGISTERING as PRODUCER: {}".format(os.getenv("KAFKA_BOOTSTRAP_HOST")))
 
-    (channel,) = sys.argv[1:]
+    #(channel,) = sys.argv[1:]
 
-    with TwitchChat(username=os.getenv("BOT_NAME"),
-                          oauth=os.getenv("OAUTH_TOKEN"),
-                          channel=channel,
+    log.info("Joining Channel {} as {}".format(os.getenv("CHANNEL"), os.getenv("TWTICH_CONSUMER_NICK")))
+    with TwitchChat(username=os.getenv("TWTICH_CONSUMER_NICK"),
+                          oauth=os.getenv("TWTICH_CONSUMER_NICK_OAUTH_TOKEN"),
+                          channel=os.getenv("CHANNEL"),
                           verbose=False) as chatstream:
         try:
             while True:

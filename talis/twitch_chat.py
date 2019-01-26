@@ -5,6 +5,8 @@ import fcntl
 import os
 import errno
 
+from .log import log
+
 class TwitchChat(object):
 
     def __init__(self, username, oauth, channel="", verbose=False):
@@ -66,6 +68,7 @@ class TwitchChat(object):
 
         s.send(('PASS %s\r\n' % self.oauth).encode('utf-8'))
         s.send(('NICK %s\r\n' % self.username).encode('utf-8'))
+        log.info("Send PASS and NICK")
 
         received = s.recv(1024).decode()
         if not TwitchChat._logged_in_successful(received):
@@ -75,6 +78,7 @@ class TwitchChat(object):
             # ... and they accepted our details
             # Connected to twitch.tv!
             # now make this socket non-blocking on the OS-level
+            log.info("Connected. Taking blocking socket into non-blocking")
             fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
             if self.s is not None:
                 self.s.close()  # close the previous socket
