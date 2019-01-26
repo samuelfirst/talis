@@ -2,7 +2,7 @@
 
 ***Author: Jon Kirkpatrick***
 
-A Microserviced Twitch Chat Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
+A Microserviced NLP (Natural Language Processing) AI Twitch Chat Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
 
 The general idea of the Bot was the ability to attach and detach "services" to the bot, at will, and dynamically, without destroying, disconnected and restarting the bot. The bot is highly fault-tolerant, in that the attached services have no "connection" or "knowledge" of the bot, and the bot has no knowledge of the services.
 
