@@ -20,9 +20,8 @@ except NoBrokersAvailable:
 except:
     pass
 
-f = open('./data/twitch_messages.txt','wr', errors = 'ignore')
-
-for msg in consumer:
-    f.write(msg.value)
+with open('./data/twitch_messages.txt', 'w') as filehandle:
+    for msg in consumer:
+        filehandle.write(msg.value.decode('utf-8')+"\r\n")
 
 f.close()
