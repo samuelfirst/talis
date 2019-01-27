@@ -67,7 +67,7 @@ class SpamDetectorConsumer(TalisKafkaConsumerQueue):
             log_info("====== SPAM TRIGGER ======".format(msg))
             log_info("{0}".format(msg))
             log_info("====== END TRIGGER ======".format(msg))
-            self.queue.put_nowait(msg)
+            self.queue.put_nowait(b"Hey everyone!")
         except:
             raise
 
@@ -116,12 +116,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         'minimum_population', metavar='minimum_population', type=int, nargs='?',
-        default=15,
+        default=10,
         help='The minimum amount of chat messages required before kicking in.'
     )
     parser.add_argument(
         'unique_threshold', metavar='unique_threshold', type=int, nargs='?',
-        default=.30,
+        default=.10,
         help='The threshold to cause a spam trigger'
     )
     parser.add_argument(

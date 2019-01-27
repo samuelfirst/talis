@@ -101,6 +101,7 @@ class TwitchChat(threading.Thread):
     def _send(self, message):
         if len(message) > 0:
             self.buffer.append(message + "\n")
+            log.info(self.buffer)
 
     def _send_pong(self):
         self._send("PONG")
@@ -136,19 +137,18 @@ class TwitchChat(threading.Thread):
     def run_central_control(self):
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()
-            data = None
-            try:
+
+            while not self.queue.empty():
                 data = self.queue.get_nowait()
-            except:
-                pass
-            if data is None:
-                return
-            try:
-                self.send_chat_message(data)
-            except:
-                raise
-            self.sent += 1
-            self.queue.task_done()
+                if data is None:
+                    return
+                try:
+                    self.send_chat_message(data)
+                    log.info("Sent chat message {}".format(data))
+                except:
+                    raise
+                self.sent += 1
+                self.queue.task_done()
             time.sleep(.01)
 
     # ENTRY POINT FOR THREADING

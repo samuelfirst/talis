@@ -26,15 +26,15 @@ class TalisKafkaProducer(threading.Thread, TalisQueue):
     # ENTRY POINT FOR THREAD
     def run(self):
         while True:
-            data = self.queue.get_nowait()
-
-            if data is None:
-                self.queue.task_done()
-                return
+            try:
+                data = self.queue.get()
+            except:
+                break
             try:
                 self.producer.send(self.kafka_topic, data)
             except:
                 pass
             self.sent += 1
             self.queue.task_done()
+        log.info("broken out")
         self.producer.flush()
