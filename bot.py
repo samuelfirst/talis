@@ -1,8 +1,17 @@
 '''
+
+NOTE: The twitch chat is pushing messages to kafka, but should only do it when it's a producer
+This bot should just be a listener on twitch chat, but not pipe messages
+
+TODO:
+    + thread consumer
+    + thread bot
+
 This consumer will join a twitch IRC CHANNEL
 ${CHANNEL} and send commands that are piped
 to ${KAFKA_BOT_MESSAGE_TOPIC}
 '''
+
 from talis.config import *
 from talis.log import log
 from talis.twitch_chat import TwitchChat

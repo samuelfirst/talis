@@ -4,12 +4,14 @@ import re
 import fcntl
 import os
 import errno
+import threading
 
 from .log import log
 
-class TwitchChat(object):
+class TwitchChat(threading.Thread):
 
-    def __init__(self, username, oauth, channel="", verbose=False):
+    def __init__(self, username, oauth, channel="", verbose=False, queue=None, stop_event=None):
+        threading.Thread.__init__(self)
         self.username = username
         self.oauth = oauth
         self.verbose = verbose
@@ -18,13 +20,10 @@ class TwitchChat(object):
         self.last_sent_time = time.time()
         self.buffer = []
         self.s = None
-
-    def __enter__(self):
-        self.connect()
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.s.close()
+        if stop_event is None or queue is None:
+            raise "Missing variable `stop_event` or `queue`"
+        self.stop_event = stop_event
+        self.queue = queue
 
     @staticmethod
     def _logged_in_successful(data):
@@ -68,24 +67,22 @@ class TwitchChat(object):
 
         s.send(('PASS %s\r\n' % self.oauth).encode('utf-8'))
         s.send(('NICK %s\r\n' % self.username).encode('utf-8'))
-        log.info("Send PASS and NICK")
+        if self.verbose:
+            log.info("Send PASS and NICK")
 
         received = s.recv(1024).decode()
         if not TwitchChat._logged_in_successful(received):
             raise IOError("Twitch did not accept the username-oauth "
                           "combination")
         else:
-            # ... and they accepted our details
-            # Connected to twitch.tv!
-            # now make this socket non-blocking on the OS-level
-            log.info("Connected. Taking blocking socket into non-blocking")
+            if self.verbose:
+                log.info("Connected. Taking blocking socket into non-blocking")
             fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
             if self.s is not None:
-                self.s.close()  # close the previous socket
-            self.s = s          # store the new socket
+                self.s.close()
+            self.s = s
             self.join_channel(self.channel)
 
-            # Wait until we have switched channels
             while self.current_channel != self.channel:
                 self.twitch_receive_messages()
 
@@ -130,6 +127,23 @@ class TwitchChat(object):
         else:
             return None
 
+    def close(self):
+        self.s.close()
+
+    def run(self):
+        while not self.stop_event.is_set():
+            received = self.twitch_receive_messages()
+            if received:
+                username = received[0]["username"]
+                msg = received[0]["message"]
+                try:
+                    if self.verbose:
+                        log.info("{0}: {1}".format(username, msg))
+                    self.queue.put_nowait(bytes(msg, 'utf-8'))
+                except:
+                    log.info(e)
+                    self.close()
+
     def twitch_receive_messages(self):
         self._push_from_buffer()
         result = []
@@ -141,11 +155,6 @@ class TwitchChat(object):
                 if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
                     return result
                 else:
-                    # a "real" error occurred
-                    # import traceback
-                    # import sys
-                    # print(traceback.format_exc())
-                    # print("Trying to recover...")
                     self.connect()
                     return result
             else:
