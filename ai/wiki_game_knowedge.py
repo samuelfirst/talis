@@ -1,0 +1,3 @@
+
+class JaduaVidan:
+    pass

@@ -1,62 +1,87 @@
-'''
 
-NOTE: The twitch chat is pushing messages to kafka, but should only do it when it's a producer
-This bot should just be a listener on twitch chat, but not pipe messages
+import os
+import queue
+import argparse
+import threading
+import signal
 
-TODO:
-    + thread consumer
-    + thread bot
-
-This consumer will join a twitch IRC CHANNEL
-${CHANNEL} and send commands that are piped
-to ${KAFKA_BOT_MESSAGE_TOPIC}
-'''
-
+# config and logs
 from talis.config import *
 from talis.log import log
+
+# threads
 from talis.twitch_chat import TwitchChat
+from talis.consumer_queue import TalisKafkaConsumerQueue
 
-from kafka import KafkaConsumer
-from kafka.errors import NoBrokersAvailable
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Twitch Message Producer')
+    parser.add_argument(
+        'channel', metavar='channel', type=str, nargs='?',
+        default=os.getenv("CHANNEL"),
+        help='The twich channel you want to join.')
+    parser.add_argument(
+        'host', metavar='host', type=str, nargs='?',
+        default=os.getenv("KAFKA_BOOTSTRAP_HOST"),
+        help='The kafka host (bootstrap)')
+    parser.add_argument(
+        'nick', metavar='nick', type=str, nargs='?',
+        default=os.getenv("TWITCH_BOT_NICK"),
+        help='The bots username/nickname on twitch')
+    parser.add_argument(
+        'oauth_file', metavar='oauth_file', type=str, nargs='?',
+        default=os.getenv("TWITCH_BOT_OAUTH_FILE"),
+        help='The path to the .oauth file')
 
-consumer_name = "BOT"
+    args = parser.parse_args()
+    channel = args.channel
+    host = args.host
+    nick = args.nick
+    oauth_file = args.oauth_file
+    kafka_topic = os.getenv("KAFKA_TOPIC")
 
-sent_messages = 0
-max_messages = 8
+    log.info("Args: {} {}".format(args, kafka_topic))
 
-def log_info(msg):
-    print("AI {0}: {1}".format(consumer_name, msg))
+    oauth_file_isfile = os.path.isfile(oauth_file)
 
-if True:
-    host = "localhost:9092"
-else:
-    host = os.getenv("KAFKA_BOOTSTRAP_HOST")
+    if oauth_file_isfile:
+        f = open(oauth_file, 'r')
+        oauth_token = f.readline().rstrip(" \n")
+        f.close()
+    else:
+        exit("Your oauth token file doesn't exist: {}".format(oauth_file))
 
-log_info("Connecting to Kafka on: {0}".format(host))
+    log.info("=== Twitch Chat Producer Started ===")
+    log.info("LOG LEVEL: {}".format(os.getenv("LOG_LEVEL")))
 
-try:
-    consumer = KafkaConsumer(os.getenv("KAFKA_BOT_MESSAGE_TOPIC"),
-                            bootstrap_servers=host,
-                            consumer_timeout_ms=400)
-except NoBrokersAvailable:
-    exit("No brokers found")
+    bot_message_queue = queue.Queue()
+    stop_event = threading.Event()
 
-log_info("Connected to {0}".format(host))
+    bot_message_consumer = TalisKafkaConsumerQueue(
+            os.getenv("KAFKA_BOT_MESSAGE_TOPIC"),
+            stop_event,
+            auto_offset_reset="latest",
+            bootstrap_servers=host,
+            queue=bot_message_queue
+    )
+    bot_message_consumer.setDaemon(True)
 
-with TwitchChat(username=os.getenv("TWITCH_BOT_NICK"),
-                oauth=os.getenv("TWITCH_BOT_OAUTH_TOKEN"),
-                channel=os.getenv("CHANNEL"),
-                verbose=False) as chatstream:
+    twitch_chat_producer = TwitchChat(
+        username=nick,
+        oauth=oauth_token,
+        channel=channel,
+        queue=bot_message_queue,
+        stop_event=stop_event,
+        verbose=False,
+        central_control=True
+    )
+    twitch_chat_producer.connect()
+
     try:
-        while True:
-            received = chatstream.twitch_receive_messages()
-
-            for msg in consumer:
-                log_info("Received Message to send to twitch: {0}".format(msg.value))
-                if sent_messages > max_messages:
-                    exit("Sent too many messages {0}".format(sent_messages))
-                sent_messages += 1
-                chatstream.send_chat_message(msg.value.decode('utf-8'))
-                break
-    except KeyboardInterrupt:
-        log.info("Goodbye\n")
+        bot_message_consumer.start()
+        twitch_chat_producer.start()
+    except (KeyboardInterrupt, SystemExit):
+        stop_event.set()
+        raise
+    except:
+        stop_event.set()
+        raise

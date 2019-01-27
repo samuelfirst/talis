@@ -10,12 +10,20 @@ import threading
 from talis.config import *
 from talis.log import log
 from talis.consumer import TalisKafkaConsumer
+from talis.stop_event import TalisStopEvent
 
-class KafkaTopicToFile(TalisKafkaConsumer):
+class KafkaTopicToFile(TalisKafkaConsumer, TalisStopEvent):
+
+    # parse out
+    def __init__(self, kafka_topic, stop_event, bootstrap_servers="", auto_offset_reset=""):
+        TalisKafkaConsumer.__init__(self, kafka_topic, bootstrap_servers=bootstrap_servers, auto_offset_reset=auto_offset_reset)
+        TalisStopEvent.__init__(self, stop_event)
+
     def run(self):
         with open('./data/twitch_messages.txt', 'w') as filehandle:
             for msg in self.consumer:
                 filehandle.write(msg.value.decode('utf-8')+"\r\n")
+                log.info("{}".format(self.processed))
                 self.processed += 1
                 if self.stop_event.is_set():
                     break
@@ -50,8 +58,10 @@ if __name__ == "__main__":
 
     try:
         consumer = KafkaTopicToFile(
-            kafka_topic, consumer_stop_event,
-            bootstrap_servers=host, auto_offset_reset=offset
+            kafka_topic,
+            consumer_stop_event,
+            bootstrap_servers=host,
+            auto_offset_reset=offset
         )
         consumer.start()
     except:

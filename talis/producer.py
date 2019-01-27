@@ -3,19 +3,20 @@ import threading
 from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
 
+from .queue import TalisQueue
 from .config import *
 from .log import log
 
-class TalisKafkaProducer(threading.Thread):
+class TalisKafkaProducer(threading.Thread, TalisQueue):
 
     def __init__(self, bootstrap_servers=None, kafka_topic=None, queue=None):
-        if (bootstrap_servers or queue or kafka_topic or stop_event) is None:
+        if (bootstrap_servers or queue or kafka_topic) is None:
             raise BaseException("Missing a required attribute in Talis Kafka Producer.")
 
         threading.Thread.__init__(self)
+        TalisQueue.__init__(self, queue)
         self.bootstrap_servers = bootstrap_servers
         self.kafka_topic = kafka_topic
-        self.queue = queue
         self.sent = 0
         try:
             self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers)

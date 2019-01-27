@@ -28,7 +28,7 @@ if __name__ == "__main__":
         default=os.getenv("TWTICH_CONSUMER_NICK"),
         help='The bots username/nickname on twitch')
     parser.add_argument(
-        oauth_file', metavar='oauth_file', type=str, nargs='?',
+        'oauth_file', metavar='oauth_file', type=str, nargs='?',
         default=os.getenv("TWTICH_CONSUMER_NICK_OAUTH_FILE"),
         help='The path to the .oauth file')
 
@@ -56,18 +56,18 @@ if __name__ == "__main__":
     chat_queue = queue.Queue()
     stop_event = threading.Event()
 
-    twitch_chat_consumer = TalisKafkaProducer(bootstrap_servers=host, kafka_topic=kafka_topic, queue=chat_queue)
+    twitch_chat_consumer = TalisKafkaProducer(bootstrap_servers=host,
+        kafka_topic=kafka_topic, queue=chat_queue)
     twitch_chat_consumer.setDaemon(True)
 
-    twitch_chat_producer = TwitchChat(username=nick, oauth=oauth_token, channel=channel,
-                                    queue=chat_queue, stop_event=stop_event, verbose=True)
+    twitch_chat_producer = TwitchChat(username=nick, oauth=oauth_token,
+        channel=channel,queue=chat_queue,
+        stop_event=stop_event, verbose=True)
     twitch_chat_producer.connect()
 
     try:
         twitch_chat_consumer.start()
         twitch_chat_producer.start()
-        while True:
-            pass
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise

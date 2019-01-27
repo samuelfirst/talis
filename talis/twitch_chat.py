@@ -10,7 +10,8 @@ from .log import log
 
 class TwitchChat(threading.Thread):
 
-    def __init__(self, username, oauth, channel="", verbose=False, queue=None, stop_event=None):
+    def __init__(self, username, oauth, channel="", verbose=False,
+        queue=None, stop_event=None, central_control=False):
         threading.Thread.__init__(self)
         self.username = username
         self.oauth = oauth
@@ -19,6 +20,8 @@ class TwitchChat(threading.Thread):
         self.channel = channel
         self.last_sent_time = time.time()
         self.buffer = []
+        self.sent = 0
+        self.central_control = central_control
         self.s = None
         if stop_event is None or queue is None:
             raise "Missing variable `stop_event` or `queue`"
@@ -130,8 +133,28 @@ class TwitchChat(threading.Thread):
     def close(self):
         self.s.close()
 
+    def run_central_control(self):
+        while not self.stop_event.is_set():
+            received = self.twitch_receive_messages()
+            data = self.queue.get()
+            log.info("CENTRAL CONTROL Received Datta: {0}".format(data))
+            if data is None:
+                self.queue.task_done()
+                return
+            try:
+                log.info("CENTRAL CONTROL Trying to send: {0}".format(data))
+                self.send_chat_message(data)
+            except:
+                raise
+            self.sent += 1
+            self.queue.task_done()
+            time.sleep(.01)
+
     # ENTRY POINT FOR THREADING
     def run(self):
+        if self.central_control:
+            log.info("I am central control!")
+            self.run_central_control()
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()
             if received:
@@ -144,6 +167,7 @@ class TwitchChat(threading.Thread):
                 except:
                     log.info(e)
                     self.close()
+            time.sleep(.01)
 
     def twitch_receive_messages(self):
         self._push_from_buffer()

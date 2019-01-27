@@ -10,8 +10,14 @@ import threading
 from talis.config import *
 from talis.log import log
 from talis.consumer import TalisKafkaConsumer
+from talis.stop_event import TalisStopEvent
 
-class DebugKafkaTopic(TalisKafkaConsumer):
+class DebugKafkaTopic(TalisKafkaConsumer, TalisStopEvent):
+
+    def __init__(self, kafka_topic, stop_event, bootstrap_servers="", auto_offset_reset=""):
+        TalisKafkaConsumer.__init__(self, kafka_topic, bootstrap_servers=bootstrap_servers, auto_offset_reset=auto_offset_reset)
+        TalisStopEvent.__init__(self, stop_event)
+
     def run(self):
         for msg in self.consumer:
             print(msg)
@@ -48,8 +54,10 @@ if __name__ == "__main__":
 
     try:
         consumer = DebugKafkaTopic(
-            kafka_topic, consumer_stop_event,
-            bootstrap_servers=host, auto_offset_reset=offset
+            kafka_topic, 
+            consumer_stop_event,
+            bootstrap_servers=host,
+            auto_offset_reset=offset
         )
         consumer.start()
     except:
