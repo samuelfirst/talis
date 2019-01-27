@@ -130,6 +130,7 @@ class TwitchChat(threading.Thread):
     def close(self):
         self.s.close()
 
+    # ENTRY POINT FOR THREADING
     def run(self):
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()

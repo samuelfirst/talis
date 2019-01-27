@@ -15,18 +15,22 @@ from talis.producer import TalisKafkaProducer
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Twitch Message Producer')
-    parser.add_argument('channel', metavar='channel', type=str, nargs='?',
-                        default=os.getenv("CHANNEL"),
-                        help='The twich channel you want to join.')
-    parser.add_argument('host', metavar='host', type=str, nargs='?',
-                        default=os.getenv("KAFKA_BOOTSTRAP_HOST"),
-                        help='The kafka host (bootstrap)')
-    parser.add_argument('nick', metavar='nick', type=str, nargs='?',
-                        default=os.getenv("TWTICH_CONSUMER_NICK"),
-                        help='The bots username/nickname on twitch')
-    parser.add_argument('oauth_file', metavar='oauth_file', type=str, nargs='?',
-                        default=os.getenv("TWTICH_CONSUMER_NICK_OAUTH_FILE"),
-                        help='The path to the .oauth file')
+    parser.add_argument(
+        'channel', metavar='channel', type=str, nargs='?',
+        default=os.getenv("CHANNEL"),
+        help='The twich channel you want to join.')
+    parser.add_argument(
+        'host', metavar='host', type=str, nargs='?',
+        default=os.getenv("KAFKA_BOOTSTRAP_HOST"),
+        help='The kafka host (bootstrap)')
+    parser.add_argument(
+        'nick', metavar='nick', type=str, nargs='?',
+        default=os.getenv("TWTICH_CONSUMER_NICK"),
+        help='The bots username/nickname on twitch')
+    parser.add_argument(
+        oauth_file', metavar='oauth_file', type=str, nargs='?',
+        default=os.getenv("TWTICH_CONSUMER_NICK_OAUTH_FILE"),
+        help='The path to the .oauth file')
 
     args = parser.parse_args()
     channel = args.channel

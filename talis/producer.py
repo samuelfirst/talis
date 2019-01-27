@@ -22,6 +22,7 @@ class TalisKafkaProducer(threading.Thread):
         except:
             raise
 
+    # ENTRY POINT FOR THREAD
     def run(self):
         while True:
             data = self.queue.get()
