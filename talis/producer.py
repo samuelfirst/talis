@@ -26,7 +26,7 @@ class TalisKafkaProducer(threading.Thread, TalisQueue):
     # ENTRY POINT FOR THREAD
     def run(self):
         while True:
-            data = self.queue.get()
+            data = self.queue.get_nowait()
 
             if data is None:
                 self.queue.task_done()

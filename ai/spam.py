@@ -121,7 +121,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         'unique_threshold', metavar='unique_threshold', type=int, nargs='?',
-        default=.50,
+        default=.30,
         help='The threshold to cause a spam trigger'
     )
     parser.add_argument(

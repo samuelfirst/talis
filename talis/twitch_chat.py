@@ -136,13 +136,14 @@ class TwitchChat(threading.Thread):
     def run_central_control(self):
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()
-            data = self.queue.get()
-            log.info("CENTRAL CONTROL Received Datta: {0}".format(data))
+            data = None
+            try:
+                data = self.queue.get_nowait()
+            except:
+                pass
             if data is None:
-                self.queue.task_done()
                 return
             try:
-                log.info("CENTRAL CONTROL Trying to send: {0}".format(data))
                 self.send_chat_message(data)
             except:
                 raise
@@ -153,7 +154,6 @@ class TwitchChat(threading.Thread):
     # ENTRY POINT FOR THREADING
     def run(self):
         if self.central_control:
-            log.info("I am central control!")
             self.run_central_control()
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()
