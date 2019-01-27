@@ -13,6 +13,31 @@ from talis.log import log
 from talis.twitch_chat import TwitchChat
 from talis.consumer_queue import TalisKafkaConsumerQueue
 
+class RulesBasedKafkaProducer(TalisKafkaConsumerQueue):
+
+    def __init__(self,
+            kafka_topic,
+            stop_event,
+            bootstrap_servers="",
+            auto_offset_reset="",
+            queue=""):
+        super().__init__(kafka_topic, stop_event, bootstrap_servers=bootstrap_servers, auto_offset_reset=auto_offset_reset, queue=queue)
+        self.commands = {
+            '!git' : 'https://github.com/jk-',
+            '!bot' : "My name is Talis and I'm a Microservice NLP AI Twitch Bot written in Python utilizing Kafka and Zookeeper. For more info type !git"
+        }
+
+    def run(self):
+        while not self.stop_event.is_set():
+            for msg in self.consumer:
+                msg_d = msg.value.decode('utf-8')
+                if msg_d in self.commands.keys() and self.processed < 5:
+                    response = self.commands[msg_d]
+                    self.queue.put_nowait(response)
+                    self.processed += 1
+            if self.stop_event.is_set():
+                break
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Twitch Message Producer')
     parser.add_argument(
@@ -65,6 +90,15 @@ if __name__ == "__main__":
     )
     bot_message_consumer.setDaemon(True)
 
+    rule_based_commands = RulesBasedKafkaProducer(
+            os.getenv("KAFKA_TOPIC"),
+            stop_event,
+            auto_offset_reset="latest",
+            bootstrap_servers=host,
+            queue=bot_message_queue
+    )
+    rule_based_commands.setDaemon(True)
+
     twitch_chat_producer = TwitchChat(
         username=nick,
         oauth=oauth_token,
@@ -78,6 +112,7 @@ if __name__ == "__main__":
 
     try:
         bot_message_consumer.start()
+        rule_based_commands.start()
         twitch_chat_producer.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()

@@ -27,6 +27,7 @@ class TalisKafkaProducer(threading.Thread, TalisQueue):
     def run(self):
         while True:
             try:
+                # BLOCKING and THREAD LOCKING
                 data = self.queue.get()
             except:
                 break
