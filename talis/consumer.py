@@ -4,7 +4,7 @@ from kafka import KafkaConsumer
 
 class TalisKafkaConsumer(threading.Thread):
 
-    def __init__(self, bootstrap_servers=None, kafka_topic=None, stop_event=None, offset=None):
+    def __init__(self, kafka_topic, stop_event, bootstrap_servers=None, auto_offset_reset=None):
         '''
             TODO: Could use other args for kafka consumer
         '''
@@ -15,8 +15,9 @@ class TalisKafkaConsumer(threading.Thread):
         self.processed = 0
         self.bootstrap_servers = bootstrap_servers
         self.kafka_topic = kafka_topic
+        self.auto_offset_reset =auto_offset_reset
         self.stop_event = stop_event
         try:
-            self.consumer = KafkaConsumer(self.kafka_topic, bootstrap_servers=self.bootstrap_servers, auto_offset_reset=offset)
+            self.consumer = KafkaConsumer(self.kafka_topic, bootstrap_servers=self.bootstrap_servers, auto_offset_reset=self.auto_offset_reset)#, consumer_timeout_ms=400)
         except:
-            pass
+            raise

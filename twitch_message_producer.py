@@ -66,3 +66,7 @@ if __name__ == "__main__":
             pass
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
+        raise
+    except:
+        stop_event.set()
+        raise

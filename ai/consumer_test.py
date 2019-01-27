@@ -15,6 +15,7 @@ class DebugKafkaTopic(TalisKafkaConsumer):
     def run(self):
         for msg in self.consumer:
             print(msg)
+            self.processed += 1
             if self.stop_event.is_set():
                 break
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument(
         'offset', metavar='offset', type=str, nargs='?',
         default='latest',
-        help='The offset of the kafka offset to start from'
+        help='The offset of the kafka offset to start from (latest|earliest)'
     )
     parser.add_argument(
         'kafka_topic', metavar='kafka_topic', type=str, nargs='?',
@@ -47,9 +48,10 @@ if __name__ == "__main__":
 
     try:
         consumer = DebugKafkaTopic(
-            kafka_topic=kafka_topic, bootstrap_servers=host,
-            stop_event=consumer_stop_event, offset=offset
+            kafka_topic, consumer_stop_event,
+            bootstrap_servers=host, auto_offset_reset=offset
         )
         consumer.start()
     except:
         consumer_stop_event.set()
+        raise

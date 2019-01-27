@@ -20,7 +20,7 @@ class TalisKafkaProducer(threading.Thread):
         try:
             self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers)
         except:
-            pass
+            raise
 
     def run(self):
         while True:

@@ -20,8 +20,8 @@ from kafka.errors import NoBrokersAvailable
 
 consumer_name = "spam"
 distribution_length_ms = 10
-minimum_population = 10
-unique_threshold = .8
+minimum_population = 20
+unique_threshold = .80
 kafka_offset = "end"
 
 def log_info(msg):
