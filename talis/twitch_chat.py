@@ -5,6 +5,7 @@ import fcntl
 import os
 import errno
 import threading
+import json
 
 from .log import log
 
@@ -147,9 +148,9 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                 try:
                     if self.verbose:
                         log.info("{0}: {1}".format(username, msg))
-                    self.chat_queue.put_nowait(bytes(msg, 'utf-8'))
+                    data = {'channel' : self.channel, 'username': username, 'message': msg}
+                    self.chat_queue.put_nowait(bytes(json.dumps(data), 'utf-8'))
                 except:
-                    log.info(e)
                     self.close()
 
             while not self.command_queue.empty():
@@ -157,9 +158,10 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                 if data is None:
                     return
                 try:
-                    self.send_chat_message(data)
+                    message = data.get('message')
+                    self.send_chat_message(message)
                     if self.verbose:
-                        log.info("Sent chat message {}".format(data))
+                        log.info("Sent chat message {}".format(message))
                 except:
                     raise
                 self.sent += 1

@@ -5,3 +5,5 @@ __pycache__
 .git
 .oauth*
 data/*
+*.mp4
+nohup.out

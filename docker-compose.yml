@@ -7,18 +7,18 @@ volumes:
     zookeeper_config:
 
 services:
-    # look up the docker wait-for to replace currentw wait-for
     # talis_app:
     #     build:
     #         context: .
     #         dockerfile: ./docker/app/Dockerfile
     #     container_name: talis_app
-    #     command: ./wait-for.sh kafka:9092 -- python twitch_message_producer.py ${CHANNEL}
     #     ports:
     #         - "5000:5000"
     #     depends_on:
     #         - zookeeper
     #         - kafka
+    # environment:
+    # WAIT_HOSTS: kafka:9092
     zookeeper:
         build:
             context: .

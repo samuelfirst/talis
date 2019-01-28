@@ -13,8 +13,8 @@ if __name__ == "__main__":
         consumer = StdoutConsumer(
             topic=config.get('topic', config.get('KAFKA_TOPIC')),
             bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-            auto_offset_reset=config.get('auto_offset_reset', 'latest')
+            auto_offset_reset=config.get('auto_offset_reset', 'earliest')
         )
         consumer.start()
     except:
-        exit("done.\n")
+        raise

@@ -1,9 +1,10 @@
 import threading
+import json
 
 from ..queue import TalisQueue
 from ..stop_event import TalisStopEvent
 
-from .consumer import TalisConsumer
+from ..consumer import TalisConsumer
 
 class QueueConsumer(threading.Thread, TalisConsumer, TalisQueue, TalisStopEvent):
 
@@ -16,7 +17,8 @@ class QueueConsumer(threading.Thread, TalisConsumer, TalisQueue, TalisStopEvent)
     # ENTRY POINT FOR THREAD
     def run(self):
         for msg in self.consumer:
-            self.queue.put_nowait(msg.value.decode('utf-8'))
+            data = json.loads(msg.value)
+            self.queue.put_nowait(data)
             self.processed += 1
             if self.stop_event.is_set():
                 break

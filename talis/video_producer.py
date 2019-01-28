@@ -1,13 +1,13 @@
 import threading
 
-from ..queue import TalisQueue
-from ..producer import TalisProducer
+import os
 
-class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
+from .queue import TalisQueue
+
+class VideoProducer(threading.Thread, TalisQueue):
 
     def __init__(self, queue, *args, **kwargs):
         threading.Thread.__init__(self)
-        TalisProducer.__init__(self, *args, **kwargs)
         TalisQueue.__init__(self, queue)
 
     # ENTRY POINT FOR THREAD
@@ -19,9 +19,9 @@ class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
             except:
                 break
             try:
-                self.producer.send(self.topic, data)
+                channel = data.get('channel')
+                print('getting clip of {}'.format(channel))
+                os.system("cd ~/sites/talis && source env/bin/activate && nohup python ~/sites/talis/subscripts/record_video.py https://www.twitch.tv/{0} {1} & disown".format(channel, channel))
             except:
                 pass
-            self.sent += 1
             self.queue.task_done()
-        self.producer.flush() # JON: CHECK THIS FLUSH

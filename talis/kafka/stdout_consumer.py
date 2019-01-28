@@ -1,8 +1,9 @@
 import threading
+import json
 
 from ..log import log
 
-from .consumer import TalisConsumer
+from ..consumer import TalisConsumer
 
 class StdoutConsumer(TalisConsumer, threading.Thread):
 
@@ -13,5 +14,6 @@ class StdoutConsumer(TalisConsumer, threading.Thread):
     # ENTRY POINT FOR THREAD
     def run(self):
         for msg in self.consumer:
-            log.info(msg)
+            data = json.loads(data)
+            log.info(data)
             self.processed += 1

@@ -18,7 +18,6 @@ from talis.kafka.spam_detector_consumer import SpamDetectorConsumer
 from talis.kafka.dequeue_producer import DequeueProducer
 
 if __name__ == "__main__":
-    log_info("Arguments: {}".format(args))
 
     # The commands (spam) to send to the botKappa
     spam_message_queue = Queue()
@@ -26,14 +25,14 @@ if __name__ == "__main__":
 
     # consume a kafka topic
     consumer = SpamDetectorConsumer(
-        config.get('minimum_population'),
-        config.get('unique_threshold'),
-        config.get('distribution_length_ms'),
+        config.get('minimum_population', 15),
+        config.get('unique_threshold', .4),
+        config.get('distribution_length_sec', 10),
         spam_message_queue,
-        stop_even,
+        stop_event,
         topic=config.get('KAFKA_TOPIC'),
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        auto_offset_reset=config.get('auto_offset_reset')
+        auto_offset_reset=config.get('auto_offset_reset', 'latest')
     )
 
     # waits for consumer to calculate

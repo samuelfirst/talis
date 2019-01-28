@@ -1,5 +1,6 @@
+import json
 
-from .consumer import TalisConsumer
+from ..consumer import TalisConsumer
 from .stop_event import TalisStopEvent
 
 class FileConsumer(TalisConsumer, TalisStopEvent):
@@ -12,7 +13,9 @@ class FileConsumer(TalisConsumer, TalisStopEvent):
     def run(self):
         with open('./data/debug_'+self.topic'+.txt', 'w') as filehandle:
             for msg in self.consumer:
-                filehandle.write(msg.value.decode('utf-8')+"\r\n")
+                data = json.loads(msg.value)
+                message = data.get('message')
+                filehandle.write(message+"\r\n")
                 self.processed += 1
                 if self.stop_event.is_set():
                     break
