@@ -29,6 +29,7 @@ if __name__ == "__main__":
     )
     bot_message_consumer.setDaemon(True)
 
+    # TODO: extract
     commands =  {
         '!git' : 'https://github.com/jk-',
         '!bot' : "My name is Talis and I'm a Microservice NLP AI Twitch Bot written in Python utilizing Kafka and Zookeeper. For more info type !git"
