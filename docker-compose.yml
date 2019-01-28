@@ -7,6 +7,7 @@ volumes:
     zookeeper_config:
 
 services:
+    # look up the docker wait-for to replace currentw wait-for
     # talis_app:
     #     build:
     #         context: .
