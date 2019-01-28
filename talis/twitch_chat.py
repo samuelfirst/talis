@@ -164,7 +164,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                     raise
                 self.sent += 1
                 self.command_queue.task_done()
-            time.sleep(1)
+            time.sleep(0.01)
 
     def twitch_receive_messages(self):
         self._push_from_buffer()
