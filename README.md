@@ -47,6 +47,5 @@ python ai/consumer_test.py
 
 ## Todo:
 - [ ] private message response and @responses
-- [ ] ai/consumer_to_file.py  --> data/twitch_messages.txt (compress please)
+- [ ] ai/consumer_to_file.py  --> data/debug_*.txt (compress please)
 - [ ] The messages AI/spam.py sends to the bot is user input and not escapped properly. Create an interface to filter out piped messages
-- [ ] Work on encapsalating, inheritance and init in most scripts. Could clean up with args,kwargs
