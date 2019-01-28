@@ -1,7 +1,8 @@
 import threading
-from .log import log
 
-from kafka import KafkaConsumer
+from ..log import log
+
+from .consumer import TalisConsumer
 
 class StdoutConsumer(TalisConsumer, threading.Thread):
 

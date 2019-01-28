@@ -1,4 +1,6 @@
-
+'''
+Use bot.py for entry bot. DEPRECATED
+'''
 import os
 import queue
 import argparse

@@ -8,11 +8,14 @@ import threading
 
 from .log import log
 
-class TwitchChat(threading.Thread):
+from talis.stop_event import TalisStopEvent
 
-    def __init__(self, username, oauth, channel="", verbose=False,
-        queue=None, stop_event=None, central_control=False):
+class TwitchChat(threading.Thread, TalisStopEvent):
+
+    def __init__(self, username, oauth, channel,
+        chat_queue, command_queue, stop_event, verbose=False):
         threading.Thread.__init__(self)
+        TalisStopEvent.__init__(self, stop_event)
         self.username = username
         self.oauth = oauth
         self.verbose = verbose
@@ -21,18 +24,15 @@ class TwitchChat(threading.Thread):
         self.last_sent_time = time.time()
         self.buffer = []
         self.sent = 0
-        self.central_control = central_control
         self.s = None
-        if stop_event is None or queue is None:
-            raise "Missing variable `stop_event` or `queue`"
-        self.stop_event = stop_event
-        self.queue = queue
+        self.chat_queue = chat_queue
+        self.command_queue = command_queue
 
     @staticmethod
     def _logged_in_successful(data):
         if re.match(r'^:(testserver\.local|tmi\.twitch\.tv)'
                     r' NOTICE \* :'
-                    r'(Login unsuccessful|Error logging in)*$',
+                    r'(Login unsuccessful|Error logging in|Improperly formatted auth)*$',
                     data.strip()):
             return False
         else:
@@ -71,7 +71,7 @@ class TwitchChat(threading.Thread):
         s.send(('PASS %s\r\n' % self.oauth).encode('utf-8'))
         s.send(('NICK %s\r\n' % self.username).encode('utf-8'))
         if self.verbose:
-            log.info("Send PASS and NICK")
+            log.info("Sent PASS and NICK")
 
         received = s.recv(1024).decode()
         if not TwitchChat._logged_in_successful(received):
@@ -82,12 +82,15 @@ class TwitchChat(threading.Thread):
                 log.info("Connected. Taking blocking socket into non-blocking")
             fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
             if self.s is not None:
+                log.info("Closed socket :(")
                 self.s.close()
             self.s = s
             self.join_channel(self.channel)
 
             while self.current_channel != self.channel:
                 self.twitch_receive_messages()
+            else:
+                log.info("JOINED {0}".format(self.channel))
 
     def _push_from_buffer(self):
         if len(self.buffer) > 0:
@@ -101,10 +104,11 @@ class TwitchChat(threading.Thread):
     def _send(self, message):
         if len(message) > 0:
             self.buffer.append(message + "\n")
-            log.info(self.buffer)
 
     def _send_pong(self):
         self._send("PONG")
+        if self.verbose:
+            log.info("SENT PONG")
 
     def join_channel(self, channel):
         self.s.send(('JOIN #%s\r\n' % channel).encode('utf-8'))
@@ -134,27 +138,7 @@ class TwitchChat(threading.Thread):
     def close(self):
         self.s.close()
 
-    def run_central_control(self):
-        while not self.stop_event.is_set():
-            received = self.twitch_receive_messages()
-
-            while not self.queue.empty():
-                data = self.queue.get_nowait()
-                if data is None:
-                    return
-                try:
-                    self.send_chat_message(data)
-                    log.info("Sent chat message {}".format(data))
-                except:
-                    raise
-                self.sent += 1
-                self.queue.task_done()
-            time.sleep(.01)
-
-    # ENTRY POINT FOR THREADING
     def run(self):
-        if self.central_control:
-            self.run_central_control()
         while not self.stop_event.is_set():
             received = self.twitch_receive_messages()
             if received:
@@ -163,11 +147,24 @@ class TwitchChat(threading.Thread):
                 try:
                     if self.verbose:
                         log.info("{0}: {1}".format(username, msg))
-                    self.queue.put_nowait(bytes(msg, 'utf-8'))
+                    self.chat_queue.put_nowait(bytes(msg, 'utf-8'))
                 except:
                     log.info(e)
                     self.close()
-            time.sleep(.01)
+
+            while not self.command_queue.empty():
+                data = self.command_queue.get_nowait()
+                if data is None:
+                    return
+                try:
+                    self.send_chat_message(data)
+                    if self.verbose:
+                        log.info("Sent chat message {}".format(data))
+                except:
+                    raise
+                self.sent += 1
+                self.command_queue.task_done()
+            time.sleep(1)
 
     def twitch_receive_messages(self):
         self._push_from_buffer()

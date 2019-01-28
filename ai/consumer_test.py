@@ -11,10 +11,10 @@ from talis.kafka.stdout_consumer import StdoutConsumer
 if __name__ == "__main__":
     try:
         consumer = StdoutConsumer(
-            topic=config.get('topic'),
+            topic=config.get('topic', config.get('KAFKA_TOPIC')),
             bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
             auto_offset_reset=config.get('auto_offset_reset', 'latest')
         )
         consumer.start()
     except:
-        exit(".\n")
+        exit("done.\n")

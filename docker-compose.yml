@@ -6,17 +6,17 @@ volumes:
     kafka_logs:
 
 services:
-    talis_app:
-        build:
-            context: .
-            dockerfile: ./docker/app/Dockerfile
-        container_name: talis_app
-        command: ./wait-for.sh kafka:9092 -- python twitch_message_producer.py ${CHANNEL}
-        ports:
-            - "5000:5000"
-        depends_on:
-            - zookeeper
-            - kafka
+    # talis_app:
+    #     build:
+    #         context: .
+    #         dockerfile: ./docker/app/Dockerfile
+    #     container_name: talis_app
+    #     command: ./wait-for.sh kafka:9092 -- python twitch_message_producer.py ${CHANNEL}
+    #     ports:
+    #         - "5000:5000"
+    #     depends_on:
+    #         - zookeeper
+    #         - kafka
     zookeeper:
         build:
             context: .

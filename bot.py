@@ -11,12 +11,14 @@ from talis.log import log
 # threads
 from talis.kafka.queue_consumer import QueueConsumer
 from talis.kafka.command_consumer import CommandConsumer
+from talis.kafka.dequeue_producer import DequeueProducer
 from talis.twitch_chat import TwitchChat
 
 if __name__ == "__main__":
     config.add_oauth()
-    log.info("=== Twitch Chat Producer Started ===")
+    log.info("=== Twitch Bot Started ===")
 
+    chat_queue = queue.Queue()
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
@@ -35,6 +37,7 @@ if __name__ == "__main__":
         '!bot' : "My name is Talis and I'm a Microservice NLP AI Twitch Bot written in Python utilizing Kafka and Zookeeper. For more info type !git"
     }
 
+    # Will follow the kafka topic for chat and push to bot_message_queue
     rule_based_commands = CommandConsumer(
         commands,
         bot_message_queue,
@@ -45,21 +48,30 @@ if __name__ == "__main__":
     )
     rule_based_commands.setDaemon(True)
 
+    twitch_chat_dequeue = DequeueProducer(
+        chat_queue,
+        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
+        topic=config.get('KAFKA_TOPIC')
+    )
+    twitch_chat_dequeue.setDaemon(True)
+
+    # Will follow the command_queue and push to chat_queue
     twitch_chat_producer = TwitchChat(
-        username=config.get('TWITCH_NICK'),
-        oauth=config.get('TWITCH_NICK_OAUTH_TOKEN'),
-        channel=config.get('TWITCH_CHANNEL'),
-        queue=bot_message_queue,
-        stop_event=stop_event,
-        verbose=False,
-        central_control=True
+        config.get('TWITCH_NICK'),
+        config.get('TWITCH_OAUTH_TOKEN'),
+        config.get('TWITCH_CHANNEL'),
+        chat_queue,
+        bot_message_queue,
+        stop_event,
+        verbose=True
     )
     twitch_chat_producer.connect()
 
     try:
+        twitch_chat_producer.start()
+        twitch_chat_dequeue.start()
         bot_message_consumer.start()
         rule_based_commands.start()
-        twitch_chat_producer.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise

@@ -1,9 +1,7 @@
 import threading
 
 from ..queue import TalisQueue
-from ..log import log
-
-from kafka import KafkaProducer
+from .producer import TalisProducer
 
 class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
 

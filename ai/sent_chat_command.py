@@ -16,7 +16,7 @@ if __name__ == "__main__":
     try:
         while True:
             command = input("What command?\n")
-            kafka_topic = os.getenv("KAFKA_BOT_MESSAGE_TOPIC")
+            kafka_topic = config.get("KAFKA_BOT_MESSAGE_TOPIC")
 
             producer = KafkaProducer(bootstrap_servers="localhost:9092")
             producer.send(kafka_topic, bytes(command, 'utf-8'))
