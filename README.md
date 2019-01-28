@@ -50,3 +50,5 @@ python ai/consumer_test.py
 - [ ] filter out messages from the bot itself
 - [ ] ai/consumer_to_file.py  --> data/debug_*.txt (compress please)
 - [ ] The messages AI/spam.py sends to the bot is user input and not escaped properly. Create an interface to filter out piped messages
+- [ ] Parse out CommandConsumer into a service
+- [ ] Recent data structure change has revealed encapsalaton issues - see queueing/dequeing files
