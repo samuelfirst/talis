@@ -1,9 +1,8 @@
 import threading
 import json
 
-from ..log import log
-
-from ..consumer import TalisConsumer
+from talis import log
+from talis.kafka.consumer import TalisConsumer
 
 class StdoutConsumer(TalisConsumer, threading.Thread):
 

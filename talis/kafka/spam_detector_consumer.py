@@ -2,9 +2,8 @@ import time
 import collections
 import json
 
-from .queue_consumer import QueueConsumer
-
-from ..log import log
+from talis import log
+from talis.kafka import QueueConsumer
 
 # fix
 def log_info(msg):

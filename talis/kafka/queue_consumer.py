@@ -1,10 +1,9 @@
 import threading
 import json
 
-from ..queue import TalisQueue
-from ..stop_event import TalisStopEvent
-
-from ..consumer import TalisConsumer
+from talis import TalisQueue
+from talis import TalisStopEvent
+from talis.kafka.consumer import TalisConsumer
 
 class QueueConsumer(threading.Thread, TalisConsumer, TalisQueue, TalisStopEvent):
 

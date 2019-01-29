@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # consume a kafka topic
     consumer = SpamDetectorConsumer(
-        config.get('minimum_population', 15),
+        config.get('minimum_population', 10),
         config.get('unique_threshold', .4),
         config.get('distribution_length_sec', 10),
         spam_message_queue,

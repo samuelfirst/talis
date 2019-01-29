@@ -1,7 +1,7 @@
 import threading
 
-from ..queue import TalisQueue
-from ..producer import TalisProducer
+from talis import TalisQueue
+from talis.kafka.producer import TalisProducer
 
 class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
 

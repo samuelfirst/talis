@@ -10,7 +10,7 @@ config_parse.add('-n', '--TWITCH_NICK', env_var='TWITCH_NICK', help='The Twitch 
 config_parse.add('-oa', '--TWITCH_NICK_OAUTH_FILE', env_var='TWITCH_NICK_OAUTH_FILE', help='The Twitch Nick oAuth File')
 
 
-class AppConfig:
+class AppConfig(object):
 
     def __init__(self, config_parse):
         self.config_parse = config_parse

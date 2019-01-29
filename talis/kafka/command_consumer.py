@@ -1,6 +1,6 @@
-
-from .queue_consumer import QueueConsumer
 import json
+
+from talis.kafka.queue_consumer import QueueConsumer
 
 class CommandConsumer(QueueConsumer):
 
@@ -11,7 +11,7 @@ class CommandConsumer(QueueConsumer):
     def run(self):
         while not self.stop_event.is_set():
             for msg in self.consumer:
-                data = json.loads(msg.value)
+                data = this.processor.parse(msg.value)
                 command = data.get('message')
                 if command in self.commands.keys():
                     response = self.commands[command]

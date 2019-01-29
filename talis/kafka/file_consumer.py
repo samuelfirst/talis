@@ -1,7 +1,7 @@
 import json
 
-from talis import TalisConsumer
 from talis import TalisStopEvent
+from talis.kafka.consumer import TalisConsumer
 
 class FileConsumer(TalisConsumer, TalisStopEvent):
 
