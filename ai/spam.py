@@ -24,7 +24,7 @@ if __name__ == "__main__":
     spam_message_queue = Queue()
     stop_event = threading.Event()
 
-    json_data_processor = JsonProcessor()
+    json_processor = JsonProcessor()
 
     # consume a kafka topic
     consumer = SpamDetectorConsumer(
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         config.get('distribution_length_sec', 10),
         spam_message_queue,
         stop_event,
-        json_data_processor,
+        json_processor,
         topic=config.get('KAFKA_TOPIC'),
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         auto_offset_reset=config.get('auto_offset_reset', 'latest')
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # waits for consumer to calculate
     bot_message_producer = DequeueProducer(
         spam_message_queue,
-        json_data_processor,
+        json_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
     )

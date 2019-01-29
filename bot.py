@@ -23,12 +23,12 @@ if __name__ == "__main__":
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
-    json_data_processor = JsonProcessor()
+    json_processor = JsonProcessor()
 
     bot_message_consumer = QueueConsumer(
         bot_message_queue,
         stop_event,
-        json_data_processor,
+        json_processor,
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC"),
         auto_offset_reset="latest",
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         commands,
         bot_message_queue,
         stop_event,
-        json_data_processor,
+        json_processor,
         topic=config.get("KAFKA_TOPIC"),
         auto_offset_reset="latest",
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     twitch_chat_dequeue = DequeueProducer(
         chat_queue,
-        json_data_processor,
+        json_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get('KAFKA_TOPIC')
     )

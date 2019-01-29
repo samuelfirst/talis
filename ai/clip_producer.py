@@ -21,12 +21,12 @@ if __name__ == "__main__":
         spam_message_queue = Queue()
         stop_event = threading.Event()
 
-        json_data_processor = JsonProcessor()
+        json_processor = JsonProcessor()
 
         consumer = QueueConsumer(
             spam_message_queue,
             stop_event,
-            json_data_processor,
+            json_processor,
             topic=config.get('topic', config.get('KAFKA_BOT_MESSAGE_TOPIC')),
             bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
             auto_offset_reset=config.get('auto_offset_reset', 'latest')
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         consumer.start()
         video_producer = VideoProducer(
             spam_message_queue,
-            json_data_processor
+            json_processor
         )
         video_producer.setDaemon(True)
         video_producer.start()
