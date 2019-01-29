@@ -13,6 +13,7 @@ class StdoutConsumer(TalisConsumer, threading.Thread):
     # ENTRY POINT FOR THREAD
     def run(self):
         for msg in self.consumer:
-            data = json.loads(data)
+            data = json.loads(msg.value)
+            print(type(msg.value))
             log.info(data)
             self.processed += 1

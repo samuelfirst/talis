@@ -62,4 +62,5 @@ python ai/consumer_test.py -kh localhost:9092
 - [ ] The messages AI/spam.py messages sent to the bot is user input and not escaped properly. Create an interface to filter out piped messages.
 - [ ] Parse out CommandConsumer into a service instead of putting it in the main bot
 - [x] Recent data structure change for kafka has revealed encapsulation issues - see queueing/dequeing files. Implement a parser.
-- [ ] Build Kafka Schema
+- [ ] Build Kafka Schema for data construction
+- [ ] utf-8 all over the place, fix

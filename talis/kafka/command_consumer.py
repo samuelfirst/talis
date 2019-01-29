@@ -1,5 +1,7 @@
 import json
 
+from talis import log
+
 from talis.kafka.queue_consumer import QueueConsumer
 
 class CommandConsumer(QueueConsumer):
@@ -15,11 +17,11 @@ class CommandConsumer(QueueConsumer):
                 command = data.get('message')
                 if command in self.commands.keys():
                     response = self.commands[command]
-                    data = {
+                    data_to_send = {
                         'channel' : data.get('channel'),
                         'message' : response
                     }
-                    self.queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
+                    self.queue.put_nowait(bytes(self.data_processor.format(data_to_send), 'utf-8'))
                     self.processed += 1
             if self.stop_event.is_set():
                 break

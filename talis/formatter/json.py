@@ -17,13 +17,5 @@ class JsonFormatter(Formatter):
         return json.dumps(data)
 
     @classmethod
-    def from_bytes(cls, data):
-        return cls._format(data.decode('utf-8'))
-
-    @classmethod
     def from_dict(cls, data):
-        return cls._format(data)
-
-    @classmethod
-    def from_str(cls, data):
         return cls._format(data)
