@@ -10,6 +10,7 @@ import json
 
 from talis import log
 from talis import TalisStopEvent
+from talis.processor import JsonProcessor
 
 class TwitchChat(threading.Thread, TalisStopEvent):
 
@@ -28,6 +29,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
         self.s = None
         self.chat_queue = chat_queue
         self.command_queue = command_queue
+        self.data_processor = JsonProcessor()
 
     @staticmethod
     def _logged_in_successful(data):
@@ -158,6 +160,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                 if data is None:
                     return
                 try:
+                    data = self.data_processor.parse(data)
                     message = data.get('message')
                     self.send_chat_message(message)
                     if self.verbose:

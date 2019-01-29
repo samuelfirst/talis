@@ -11,7 +11,7 @@ class CommandConsumer(QueueConsumer):
     def run(self):
         while not self.stop_event.is_set():
             for msg in self.consumer:
-                data = this.processor.parse(msg.value)
+                data = self.data_processor.parse(msg.value)
                 command = data.get('message')
                 if command in self.commands.keys():
                     response = self.commands[command]
@@ -19,8 +19,7 @@ class CommandConsumer(QueueConsumer):
                         'channel' : data.get('channel'),
                         'message' : response
                     }
-                    data_json = json.dumps(data)
-                    self.queue.put_nowait(bytes(data_json, 'utf-8'))
+                    self.queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
                     self.processed += 1
             if self.stop_event.is_set():
                 break
