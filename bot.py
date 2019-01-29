@@ -14,6 +14,7 @@ from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
     config.add_oauth()
+    log.setLevel(config.log_level())
     log.info("=== Twitch Bot Started ===")
 
     chat_queue = queue.Queue()
@@ -46,8 +47,7 @@ if __name__ == "__main__":
         config.get('TWITCH_CHANNEL'),
         chat_queue,
         bot_message_queue,
-        stop_event,
-        verbose=True
+        stop_event
     )
     twitch_chat_producer.connect()
 

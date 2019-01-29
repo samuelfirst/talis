@@ -14,12 +14,11 @@ class TwitchChat(threading.Thread, TalisStopEvent):
 
     def __init__(self, username, oauth,
                 channel,chat_queue, command_queue,
-                stop_event, verbose=False):
+                stop_event):
         threading.Thread.__init__(self)
         TalisStopEvent.__init__(self, stop_event)
         self.username = username
         self.oauth = oauth
-        self.verbose = verbose
         self.current_channel = ""
         self.channel = channel
         self.last_sent_time = time.time()
@@ -72,16 +71,14 @@ class TwitchChat(threading.Thread, TalisStopEvent):
 
         s.send(('PASS %s\r\n' % self.oauth).encode('utf-8'))
         s.send(('NICK %s\r\n' % self.username).encode('utf-8'))
-        if self.verbose:
-            log.info("Sent PASS and NICK")
+        log.debug("Sent PASS and NICK")
 
         received = s.recv(1024).decode()
         if not TwitchChat._logged_in_successful(received):
             raise IOError("Twitch did not accept the username-oauth "
                           "combination")
         else:
-            if self.verbose:
-                log.info("Connected. Taking blocking socket into non-blocking")
+            log.debug("Connected. Taking blocking socket into non-blocking")
             fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
             if self.s is not None:
                 log.info("Closed socket :(")
@@ -109,8 +106,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
 
     def _send_pong(self):
         self._send("PONG")
-        if self.verbose:
-            log.info("SENT PONG")
+        log.debug("SENT PONG")
 
     def join_channel(self, channel):
         self.s.send(('JOIN #%s\r\n' % channel).encode('utf-8'))
@@ -147,8 +143,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                 username = received[0]["username"]
                 msg = received[0]["message"]
                 try:
-                    if self.verbose:
-                        log.info("{0}: {1}".format(username, msg))
+                    log.debug("{0}: {1}".format(username, msg))
                     data = {'channel' : self.channel, 'username': username, 'message': msg}
                     self.chat_queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
                 except:
@@ -162,8 +157,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                     data = self.data_processor.parse(data)
                     message = data.get('message')
                     self.send_chat_message(message)
-                    if self.verbose:
-                        log.info("Sent chat message {}".format(message))
+                    log.verbose("Sent chat message {}".format(message))
                 except:
                     raise
                 self.sent += 1

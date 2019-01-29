@@ -1,4 +1,5 @@
 import configargparse
+import logging
 import os
 
 config_parse = configargparse.ArgParser(default_config_files=['.env', 'local.env'], config_file_parser_class=configargparse.DefaultConfigFileParser)
@@ -34,6 +35,11 @@ class AppConfig(object):
                 self.config_parse.add('-tot', '--TWITCH_OAUTH_TOKEN', default=oauth_token)
         self._parse()
 
+    def log_level(self):
+        log_config_numeric_level = getattr(logging, config.get('LOG_LEVEL').upper(), None)
+        if not isinstance(log_config_numeric_level, int):
+            raise ValueError('Invalid log level in config: %s' % config.get('LOG_LEVEL'))
+        return log_config_numeric_level
 
     def add_oauth(self):
         self._calculate_oauth_token()
