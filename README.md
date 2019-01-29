@@ -42,7 +42,7 @@ You *will* need to launch the kafka + zookeeper containers in order for the scri
 ```python bot.py -tc <channel> -kh localhost:9092```
 
 
-***To see if the bot worked:***
+***To see if the bot worked (when using Docker for bot):***
 
 ```
 docker logs -f talis_app
@@ -52,7 +52,7 @@ You should see messages piping out to your console.
 
 ***To test if kafka is receiving the messages:***
 ```
-python ai/consumer_test.py
+python ai/consumer_test.py -kh localhost:9092
 ```
 
 ## Todo:
