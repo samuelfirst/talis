@@ -1,5 +1,7 @@
 '''
-Use this script to debug a kafka topic.
+This script will attach and listen for 
+bot messages (temporary location for testing) and will
+generate a 10 second clip of the channel where "hype" occurred
 '''
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
