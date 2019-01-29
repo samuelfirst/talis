@@ -10,11 +10,9 @@ class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
         TalisProducer.__init__(self, data_processor, *args, **kwargs)
         TalisQueue.__init__(self, queue)
 
-    # ENTRY POINT FOR THREAD
     def run(self):
         while True:
             try:
-                # BLOCKING and THREAD LOCKING
                 data = self.queue.get()
             except:
                 break

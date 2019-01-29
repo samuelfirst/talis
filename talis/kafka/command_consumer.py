@@ -22,6 +22,7 @@ class CommandConsumer(QueueConsumer):
                         'message' : response
                     }
                     self.queue.put_nowait(bytes(self.data_processor.format(data_to_send), 'utf-8'))
+                    log.info('RULES BASED COMMAND  {}'.format(command))
                     self.processed += 1
             if self.stop_event.is_set():
                 break

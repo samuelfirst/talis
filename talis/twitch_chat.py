@@ -5,8 +5,6 @@ import fcntl
 import os
 import errno
 import threading
-import json
-# TODO: import json data procsesor here
 
 from talis import log
 from talis import TalisStopEvent
@@ -14,8 +12,9 @@ from talis.processor import JsonProcessor
 
 class TwitchChat(threading.Thread, TalisStopEvent):
 
-    def __init__(self, username, oauth, channel,
-        chat_queue, command_queue, stop_event, verbose=False):
+    def __init__(self, username, oauth,
+                channel,chat_queue, command_queue,
+                stop_event, verbose=False):
         threading.Thread.__init__(self)
         TalisStopEvent.__init__(self, stop_event)
         self.username = username
@@ -151,7 +150,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
                     if self.verbose:
                         log.info("{0}: {1}".format(username, msg))
                     data = {'channel' : self.channel, 'username': username, 'message': msg}
-                    self.chat_queue.put_nowait(bytes(json.dumps(data), 'utf-8'))
+                    self.chat_queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
                 except:
                     self.close()
 

@@ -17,27 +17,28 @@ from talis.kafka import QueueConsumer
 from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
+    spam_message_queue = Queue()
+    stop_event = threading.Event()
+    json_processor = JsonProcessor()
+    consumer = QueueConsumer(
+        spam_message_queue,
+        stop_event,
+        json_processor,
+        topic=config.get('topic', config.get('KAFKA_BOT_MESSAGE_TOPIC')),
+        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
+        auto_offset_reset=config.get('auto_offset_reset', 'latest')
+    )
+    video_producer = VideoProducer(
+        spam_message_queue,
+        json_processor
+    )
+    video_producer.setDaemon(True)
     try:
-        spam_message_queue = Queue()
-        stop_event = threading.Event()
-
-        json_processor = JsonProcessor()
-
-        consumer = QueueConsumer(
-            spam_message_queue,
-            stop_event,
-            json_processor,
-            topic=config.get('topic', config.get('KAFKA_BOT_MESSAGE_TOPIC')),
-            bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-            auto_offset_reset=config.get('auto_offset_reset', 'latest')
-        )
         consumer.start()
-        video_producer = VideoProducer(
-            spam_message_queue,
-            json_processor
-        )
-        video_producer.setDaemon(True)
         video_producer.start()
+    except (KeyboardInterrupt, SystemExit):
+        stop_event.set()
+        pass
     except:
         stop_event.set()
-        raise
+        pass

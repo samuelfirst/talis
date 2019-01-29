@@ -10,13 +10,15 @@ from talis.kafka import StdoutConsumer
 from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
+    consumer = StdoutConsumer(
+        JsonProcessor(),
+        topic=config.get('topic', config.get('KAFKA_TOPIC')),
+        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
+        auto_offset_reset=config.get('auto_offset_reset', 'earliest')
+    )
     try:
-        consumer = StdoutConsumer(
-            JsonProcessor(),
-            topic=config.get('topic', config.get('KAFKA_TOPIC')),
-            bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-            auto_offset_reset=config.get('auto_offset_reset', 'earliest')
-        )
         consumer.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
     except:
-        raise
+        pass

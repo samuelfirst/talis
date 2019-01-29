@@ -1,8 +1,5 @@
-import os
 import queue
-import argparse
 import threading
-import signal
 
 # config and logs
 from talis import config
@@ -35,24 +32,6 @@ if __name__ == "__main__":
     )
     bot_message_consumer.setDaemon(True)
 
-    # TODO: extract
-    commands =  {
-        '!git' : 'https://github.com/jk-',
-        '!bot' : "My name is Talis and I'm a Microservice NLP AI Twitch Bot written in Python utilizing Kafka and Zookeeper. For more info type !git"
-    }
-
-    # Will follow the kafka topic for chat and push to bot_message_queue
-    rule_based_commands = CommandConsumer(
-        commands,
-        bot_message_queue,
-        stop_event,
-        json_processor,
-        topic=config.get("KAFKA_TOPIC"),
-        auto_offset_reset="latest",
-        bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
-    )
-    rule_based_commands.setDaemon(True)
-
     twitch_chat_dequeue = DequeueProducer(
         chat_queue,
         json_processor,
@@ -61,7 +40,6 @@ if __name__ == "__main__":
     )
     twitch_chat_dequeue.setDaemon(True)
 
-    # Will follow the command_queue and push to chat_queue
     twitch_chat_producer = TwitchChat(
         config.get('TWITCH_NICK'),
         config.get('TWITCH_OAUTH_TOKEN'),
@@ -77,7 +55,6 @@ if __name__ == "__main__":
         twitch_chat_producer.start()
         twitch_chat_dequeue.start()
         bot_message_consumer.start()
-        rule_based_commands.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise

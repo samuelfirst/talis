@@ -15,15 +15,15 @@ if __name__ == "__main__":
 
     consumer_stop_event = threading.Event()
 
+    consumer = FileConsumer(
+        consumer_stop_event,
+        JsonProcessor(),
+        topic=config.get('topic'),
+        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
+        auto_offset_reset=config.get('auto_offset_reset')
+    )
     try:
-        consumer = FileConsumer(
-            consumer_stop_event,
-            JsonProcessor(),
-            topic=config.get('topic'),
-            bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-            auto_offset_reset=config.get('auto_offset_reset')
-        )
         consumer.start()
-    except:
+    except (KeyboardInterrupt, SystemExit):
         consumer_stop_event.set()
-        raise
+        pass
