@@ -1,8 +1,11 @@
+# TODO: Format execution string
+# naming is a bit weird "producer" mixes with Kafka Producer
+
 import threading
 
 import os
 
-from .queue import TalisQueue
+from talis import TalisQueue
 
 class VideoProducer(threading.Thread, TalisQueue):
 
@@ -21,7 +24,7 @@ class VideoProducer(threading.Thread, TalisQueue):
             try:
                 channel = data.get('channel')
                 print('getting clip of {}'.format(channel))
-                os.system("cd ~/sites/talis && source env/bin/activate && nohup python ~/sites/talis/subscripts/record_video.py https://www.twitch.tv/{0} {1} & disown".format(channel, channel))
+                os.system("cd ~/sites/talis && source env/bin/activate && nohup python scripts/record_video.py https://www.twitch.tv/{0} {1} & disown".format(channel, channel))
             except:
                 pass
             self.queue.task_done()

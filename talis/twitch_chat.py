@@ -6,10 +6,10 @@ import os
 import errno
 import threading
 import json
+# TODO: import json data procsesor here
 
-from .log import log
-
-from talis.stop_event import TalisStopEvent
+from talis import log
+from talis import TalisStopEvent
 
 class TwitchChat(threading.Thread, TalisStopEvent):
 

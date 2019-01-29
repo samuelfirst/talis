@@ -1,3 +1,4 @@
-
-class JaduaVidan:
+'''
+class WikiGame:
     pass
+'''

@@ -6,8 +6,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 import argparse
 
-from talis.config import *
-from talis.log import log
+from talis import config
+from talis import log
+from talis.processor import JsonProcessor
 
 from kafka import KafkaProducer
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
             command = input("What command?\n")
             kafka_topic = config.get("KAFKA_BOT_MESSAGE_TOPIC")
 
-            producer = KafkaProducer(bootstrap_servers="localhost:9092")
+            producer = KafkaProducer(JsonProcessor(), bootstrap_servers="localhost:9092")
             producer.send(kafka_topic, bytes(command, 'utf-8'))
             producer.flush()
     except (KeyboardInterrupt, SystemExit):

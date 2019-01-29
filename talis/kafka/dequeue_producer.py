@@ -5,9 +5,9 @@ from ..producer import TalisProducer
 
 class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
 
-    def __init__(self, queue, *args, **kwargs):
+    def __init__(self, queue, data_processor, *args, **kwargs):
         threading.Thread.__init__(self)
-        TalisProducer.__init__(self, *args, **kwargs)
+        TalisProducer.__init__(self, data_processor, *args, **kwargs)
         TalisQueue.__init__(self, queue)
 
     # ENTRY POINT FOR THREAD

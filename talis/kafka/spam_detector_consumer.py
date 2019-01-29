@@ -12,8 +12,8 @@ def log_info(msg):
 
 class SpamDetectorConsumer(QueueConsumer):
     def __init__(self, minimum_population, unique_threshold, distribution_length_ms,
-            queue, stop_event, *args, **kwargs):
-        super().__init__(queue, stop_event, *args, **kwargs)
+            queue, stop_event, data_processor, *args, **kwargs):
+        super().__init__(queue, stop_event, data_processor, *args, **kwargs)
         self.message_bin = []
         self.data_bin = []
         self.minimum_population = minimum_population

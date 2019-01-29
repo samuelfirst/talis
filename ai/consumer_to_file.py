@@ -5,10 +5,10 @@ Output a kafka topic to a file
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-from talis.config import *
-from talis.log import log
-
-from talis.kafka.file_consumer import FileConsumer
+from talis import config
+from talis import log
+from talis.kafka import FileConsumer
+from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
     log.info("Arguments: {}".format(args))
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     try:
         consumer = FileConsumer(
             consumer_stop_event,
+            JsonProcessor(),
             topic=config.get('topic'),
             bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
             auto_offset_reset=config.get('auto_offset_reset')

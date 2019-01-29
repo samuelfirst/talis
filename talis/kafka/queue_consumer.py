@@ -8,9 +8,9 @@ from ..consumer import TalisConsumer
 
 class QueueConsumer(threading.Thread, TalisConsumer, TalisQueue, TalisStopEvent):
 
-    def __init__(self, queue, stop_event, *args, **kwargs):
+    def __init__(self, queue, stop_event, data_processor, *args, **kwargs):
         threading.Thread.__init__(self)
-        TalisConsumer.__init__(self, *args, **kwargs)
+        TalisConsumer.__init__(self, data_processor, *args, **kwargs)
         TalisQueue.__init__(self, queue)
         TalisStopEvent.__init__(self, stop_event)
 

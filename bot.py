@@ -5,14 +5,15 @@ import threading
 import signal
 
 # config and logs
-from talis.config import *
-from talis.log import log
+from talis import config
+from talis import log
 
 # threads
-from talis.kafka.queue_consumer import QueueConsumer
-from talis.kafka.command_consumer import CommandConsumer
-from talis.kafka.dequeue_producer import DequeueProducer
-from talis.twitch_chat import TwitchChat
+from talis import TwitchChat
+from talis.kafka import QueueConsumer
+from talis.kafka import CommandConsumer
+from talis.kafka import DequeueProducer
+from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
     config.add_oauth()
@@ -22,9 +23,12 @@ if __name__ == "__main__":
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
+    json_data_processor = JsonProcessor()
+
     bot_message_consumer = QueueConsumer(
         bot_message_queue,
         stop_event,
+        json_data_processor,
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC"),
         auto_offset_reset="latest",
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
@@ -42,6 +46,7 @@ if __name__ == "__main__":
         commands,
         bot_message_queue,
         stop_event,
+        json_data_processor,
         topic=config.get("KAFKA_TOPIC"),
         auto_offset_reset="latest",
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
@@ -50,6 +55,7 @@ if __name__ == "__main__":
 
     twitch_chat_dequeue = DequeueProducer(
         chat_queue,
+        json_data_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get('KAFKA_TOPIC')
     )

@@ -1,7 +1,9 @@
+# TODO: Fix
+
 import logging
 import os
 
-from .config import config
+from talis import config
 
 log = logging.getLogger("talis_app")
 ch = logging.StreamHandler()

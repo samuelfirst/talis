@@ -1,4 +1,3 @@
-
 from threading import Event
 
 class TalisStopEvent(object):

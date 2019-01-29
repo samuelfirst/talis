@@ -11,17 +11,20 @@ import threading
 
 from queue import Queue
 
-from talis.config import config
-from talis.log import log
+from talis import config
+from talis import log
 
-from talis.kafka.spam_detector_consumer import SpamDetectorConsumer
-from talis.kafka.dequeue_producer import DequeueProducer
+from talis.kafka import SpamDetectorConsumer
+from talis.kafka import DequeueProducer
+from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
 
     # The commands (spam) to send to the botKappa
     spam_message_queue = Queue()
     stop_event = threading.Event()
+
+    json_data_processor = JsonProcessor()
 
     # consume a kafka topic
     consumer = SpamDetectorConsumer(
@@ -30,6 +33,7 @@ if __name__ == "__main__":
         config.get('distribution_length_sec', 10),
         spam_message_queue,
         stop_event,
+        json_data_processor,
         topic=config.get('KAFKA_TOPIC'),
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         auto_offset_reset=config.get('auto_offset_reset', 'latest')
@@ -38,6 +42,7 @@ if __name__ == "__main__":
     # waits for consumer to calculate
     bot_message_producer = DequeueProducer(
         spam_message_queue,
+        json_data_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
     )
