@@ -4,21 +4,14 @@ from talis.parser import Parser
 
 class JsonParser(Parser):
 
-    @staticmethod
-    def parse(data):
+    def parse(self, data):
         if not isinstance(data, (str, bytes)):
             raise TypeError("Data needs to be of type `str` or `bytes` to parse")
 
-        return getattr(JsonParser, '_from_%s' % type(data).__name__)(data)
+        if type(data).__name__ == 'bytes':
+            return self._parse(data.decode('utf-8'))
 
-    @classmethod
-    def _parse(cls, data):
+        return self._parse(data)
+
+    def _parse(self, data):
         return json.loads(data)
-
-    @classmethod
-    def _from_bytes(cls, data):
-        return cls._parse(data.decode('utf-8'))
-
-    @classmethod
-    def _from_str(cls, data):
-        return cls._parse(data)

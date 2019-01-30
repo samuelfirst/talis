@@ -1,14 +1,13 @@
 import threading
 import os
 
-from talis import TalisQueue
 from talis import log
 
-class VideoProducer(threading.Thread, TalisQueue):
+class VideoProducer(threading.Thread):
 
     def __init__(self, queue, *args, **kwargs):
         threading.Thread.__init__(self)
-        TalisQueue.__init__(self, queue)
+        self.queue = queue
 
     def run(self):
         while True:

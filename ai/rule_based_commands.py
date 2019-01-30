@@ -25,7 +25,6 @@ if __name__ == "__main__":
 
     json_processor  = JsonProcessor()
 
-
     bot_message_dequeue = DequeueProducer(
         bot_message_queue,
         json_processor,
@@ -34,7 +33,7 @@ if __name__ == "__main__":
     )
     bot_message_dequeue.setDaemon(True)
 
-    rule_based_commands = CommandConsumer(
+    rule_based_commands = CommandConsumer.with_thread(
         commands,
         bot_message_queue,
         stop_event,

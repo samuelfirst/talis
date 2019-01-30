@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from talis import config
 from talis import log
+
 from talis.kafka import StdoutConsumer
 from talis.processor import JsonProcessor
 

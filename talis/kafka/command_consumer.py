@@ -1,13 +1,11 @@
-import json
-
 from talis import log
 
 from talis.kafka.queue_consumer import QueueConsumer
 
 class CommandConsumer(QueueConsumer):
 
-    def __init__(self, commands, queue, data_processor, stop_event, *args, **kwargs):
-        super().__init__(queue, data_processor, stop_event, *args, **kwargs)
+    def __init__(self, commands, queue, stop_event, *args, **kwargs):
+        supert(CommandConsumer, self).__init__(queue, stop_event, *args, **kwargs)
         self.commands = commands
 
     def run(self):

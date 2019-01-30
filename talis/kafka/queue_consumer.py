@@ -1,19 +1,17 @@
 import threading
 import json
 
-from talis import TalisQueue
-from talis import TalisStopEvent
 from talis.kafka.consumer import TalisConsumer
 
-class QueueConsumer(threading.Thread, TalisConsumer, TalisQueue, TalisStopEvent):
+class QueueConsumer(TalisConsumer, threading.Thread):
 
-    def __init__(self, queue, stop_event, data_processor, *args, **kwargs):
+    def __init__(self, queue, stop_event, *args, **kwargs):
+        TalisConsumer.__init__(self, *args, **kwargs)
         threading.Thread.__init__(self)
-        TalisConsumer.__init__(self, data_processor, *args, **kwargs)
-        TalisQueue.__init__(self, queue)
-        TalisStopEvent.__init__(self, stop_event)
 
-    # ENTRY POINT FOR THREAD
+        self.set_queue(queue)
+        self.set_stop_event(stop_event)
+
     def run(self):
         for msg in self.consumer:
             self.queue.put_nowait(msg.value)

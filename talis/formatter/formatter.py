@@ -2,6 +2,6 @@ import abc
 
 class Formatter(metaclass=abc.ABCMeta):
 
-    @staticmethod
+    @abc.abstractmethod
     def format(data):
         pass

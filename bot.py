@@ -57,7 +57,7 @@ if __name__ == "__main__":
         bot_message_consumer.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
-        raise
+        pass
     except:
         stop_event.set()
-        raise
+        pass

@@ -1,14 +1,8 @@
 import threading
 
-from talis import TalisQueue
-from talis.kafka.producer import TalisProducer
+from talis.kafka.consumer import TalisConsumer
 
-class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
-
-    def __init__(self, queue, data_processor, *args, **kwargs):
-        threading.Thread.__init__(self)
-        TalisProducer.__init__(self, data_processor, *args, **kwargs)
-        TalisQueue.__init__(self, queue)
+class DequeueProducer(TalisConsumer):
 
     def run(self):
         while True:

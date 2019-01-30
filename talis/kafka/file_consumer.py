@@ -1,14 +1,12 @@
 import json
 
-from talis import TalisStopEvent
 from talis.kafka.consumer import TalisConsumer
 
-class FileConsumer(TalisConsumer, TalisStopEvent):
+class FileConsumer(TalisConsumer):
 
-    # parse out
-    def __init__(self, stop_event, data_processor, *args, **kwargs):
-        TalisStopEvent.__init__(self, stop_event)
-        TalisConsumer.__init__(self, data_processor, *args, **kwargs)
+    def __init__(self, data_processor, *args, **kwargs):
+        super(FileConsumer, self).__init__(self, *args, **kwargs)
+        self.set_data_processor(data_processor)
 
     def run(self):
         with open("./data/debug_{}.txt".format(self.topic), 'w') as filehandle:

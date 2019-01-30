@@ -7,16 +7,14 @@ import errno
 import threading
 
 from talis import log
-from talis import TalisStopEvent
 from talis.processor import JsonProcessor
 
-class TwitchChat(threading.Thread, TalisStopEvent):
+class TwitchChat(threading.Thread):
 
     def __init__(self, username, oauth,
-                channel,chat_queue, command_queue,
+                channel, chat_queue, command_queue,
                 stop_event):
         threading.Thread.__init__(self)
-        TalisStopEvent.__init__(self, stop_event)
         self.username = username
         self.oauth = oauth
         self.current_channel = ""
@@ -25,6 +23,7 @@ class TwitchChat(threading.Thread, TalisStopEvent):
         self.buffer = []
         self.sent = 0
         self.s = None
+        self.stop_event = stop_event
         self.chat_queue = chat_queue
         self.command_queue = command_queue
         self.data_processor = JsonProcessor()
