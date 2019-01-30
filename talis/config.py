@@ -2,20 +2,33 @@ import configargparse
 import logging
 import os
 
-config_parse = configargparse.ArgParser(default_config_files=['.env', 'local.env'], config_file_parser_class=configargparse.DefaultConfigFileParser)
-config_parse.add('-c', '--config', required=False, is_config_file=True, help='Config File Path (*.env)')
+config_parse = configargparse.ArgParser(
+    default_config_files=['.env', 'local.env'],
+    config_file_parser_class=configargparse.DefaultConfigFileParser
+)
+config_parse.add('-c', '--config', required=False,
+                 is_config_file=True, help='Config File Path (*.env)')
 config_parse.add('-v', help='verbose', action='store_true')
-config_parse.add('-tc', '--TWITCH_CHANNEL', env_var='TWITCH_CHANNEL', help="The Twitch Chat Channel")
-config_parse.add('-kh', '--KAFKA_BOOTSTRAP_HOST', env_var='KAFKA_BOOTSTRAP_HOST', help='The kafka host (bootstrap_server)')
-config_parse.add('-n', '--TWITCH_NICK', env_var='TWITCH_NICK', help='The Twitch Nickname/Username for the Bot')
-config_parse.add('-oa', '--TWITCH_NICK_OAUTH_FILE', env_var='TWITCH_NICK_OAUTH_FILE', help='The Twitch Nick oAuth File')
+config_parse.add('-tc', '--TWITCH_CHANNEL',
+                 env_var='TWITCH_CHANNEL', help="The Twitch Chat Channel")
+config_parse.add('-kh', '--KAFKA_BOOTSTRAP_HOST',
+                 env_var='KAFKA_BOOTSTRAP_HOST',
+                 help='The kafka host (bootstrap_server)')
+config_parse.add('-n', '--TWITCH_NICK', env_var='TWITCH_NICK',
+                 help='The Twitch Nickname/Username for the Bot')
+config_parse.add('-oa', '--TWITCH_NICK_OAUTH_FILE',
+                 env_var='TWITCH_NICK_OAUTH_FILE',
+                 help='The Twitch Nick oAuth File')
 
 
 class AppConfig(object):
 
     def __init__(self, config_parse):
         if not isinstance(config_parse, configargparse.ArgParser):
-            raise TypeError("config_parse must be an `configargparse.ArgParser`")
+            raise TypeError(
+                "config_parse must be a "
+                "`configargparse.ArgParser`"
+            )
         self.config_parse = config_parse
         self._calculate_others_init()
 
@@ -34,13 +47,24 @@ class AppConfig(object):
                 f = open(oauth_file, 'r')
                 oauth_token = f.readline().rstrip(" \n")
                 f.close()
-                self.config_parse.add('-tot', '--TWITCH_OAUTH_TOKEN', default=oauth_token)
+                self.config_parse.add(
+                    '-tot',
+                    '--TWITCH_OAUTH_TOKEN',
+                    default=oauth_token
+                )
         self._parse()
 
     def log_level(self):
-        log_config_numeric_level = getattr(logging, config.get('LOG_LEVEL').upper(), None)
+        log_config_numeric_level = getattr(
+            logging,
+            config.get('LOG_LEVEL').upper(),
+            None
+        )
         if not isinstance(log_config_numeric_level, int):
-            raise ValueError('Invalid log level in config: %s' % config.get('LOG_LEVEL'))
+            raise ValueError(
+                'Invalid log level in config: %s'
+                % config.get('LOG_LEVEL')
+            )
         return log_config_numeric_level
 
     def add_oauth(self):
@@ -55,7 +79,7 @@ class AppConfig(object):
             variable = "--{0}".format(name)
             if variable in self.config[1]:
                 variable_i = self.config[1].index(variable)
-                return self.config[1][variable_i+1]
+                return self.config[1][variable_i + 1]
         return default or None
 
 config = AppConfig(config_parse)

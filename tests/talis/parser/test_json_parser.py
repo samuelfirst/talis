@@ -20,13 +20,19 @@ valid_data = [
      {'channel': "talis", 'message': "test message"})
 ]
 
+
 def test_json_parseter_type():
-    assert True == issubclass(JsonParser, Parser), 'JsonParser must be of instance `Parser`'
+    assert issubclass(JsonParser, Parser) is True, (
+        'JsonParser must be of '
+        'instance `Parser`'
+    )
+
 
 @pytest.mark.parametrize("invalid, expected", invalid_tpes)
 def test_json_parseter_invalid_type(invalid, expected):
     with pytest.raises(expected) as e_info:
         JsonParser().parse(invalid)
+
 
 @pytest.mark.parametrize("valid, expected", valid_data)
 def test_json_parseter_valid_type(valid, expected):

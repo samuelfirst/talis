@@ -2,10 +2,11 @@
 Output a kafka topic to a file
 # TODO: Add compression
 '''
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
+import os
+import sys
 import threading
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from talis import config
 from talis import log

@@ -3,6 +3,7 @@ import pytest
 from configargparse import ArgParser
 from talis.config import AppConfig
 
+
 class TestAppConfig(object):
 
     def test_with_invalid_type(self):

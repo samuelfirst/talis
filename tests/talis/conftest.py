@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def default_env():
     default_env = {
@@ -21,6 +22,7 @@ def default_env():
     }
     return default_env
 
+
 @pytest.fixture
 def unknown_args():
     unknown_args = {
@@ -30,6 +32,7 @@ def unknown_args():
         '-oa': ['--TWITCH_NICK_OAUTH_FILE', 'TWITCH_NICK_OAUTH_FILE'],
     }
     return unknown_args
+
 
 @pytest.fixture
 def cli_input(request, tmpdir, default_env, unknown_args):
@@ -42,5 +45,9 @@ def cli_input(request, tmpdir, default_env, unknown_args):
 
     config_parse = configargparse.ArgParser(default_config_files=[file_path])
     for i in unknown_args:
-        config_parse.add("{}".format(i), unknown_args.get(i)[0], env_var=unknown_args.get(i)[1])
+        config_parse.add(
+            "{}".format(i),
+            unknown_args.get(i)[0],
+            env_var=unknown_args.get(i)[1]
+        )
     return config_parse

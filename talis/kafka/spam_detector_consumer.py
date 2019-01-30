@@ -5,15 +5,20 @@ import json
 from talis import log
 from talis.kafka.queue_consumer import QueueConsumer
 
+
 # fix
 def log_info(msg):
     print("AI SPAM: {}".format(msg))
+
 
 class SpamDetectorConsumer(QueueConsumer):
     def __init__(self, minimum_population, unique_threshold,
                  distribution_length_ms, queue, stop_event,
                  data_processor, *args, **kwargs):
-        super(SpamDetectorConsumer, self).__init__(queue, stop_event, *args, **kwargs)
+        super(SpamDetectorConsumer, self).__init__(
+            queue, stop_event,
+            *args, **kwargs
+        )
         self.set_data_processor(data_processor)
         self.message_bin = []
         self.data_bin = []
@@ -26,16 +31,21 @@ class SpamDetectorConsumer(QueueConsumer):
     def calculate_unique_distribution(self):
 
         bin_len = len(self.message_bin)
-        counter = collections.Counter(map(lambda x : x.lower(), self.message_bin))
+        counter = collections.Counter(
+            map(lambda x: x.lower(), self.message_bin)
+        )
         most_common_count = counter.most_common(1)[0][1]
-        r = most_common_count/bin_len
-        log_info("{0:.2f}% of {1:.2f}% threshold".format(r*100, self.unique_threshold*100))
+        r = most_common_count / bin_len
+        log_info("{0:.2f}% of {1:.2f}% threshold".format(
+            r * 100,
+            self.unique_threshold * 100
+        ))
         return r
 
     def collapse_message(self, msg):
         m_split = msg.lower().split(" ")
         bin_len = len(m_split)
-        unique = len(list(set(map(lambda x : x.lower(),m_split))))
+        unique = len(list(set(map(lambda x: x.lower(), m_split))))
         if bin_len > 1 and unique == 1:
             log_info("DUPLICATE SPAM {0}".format(msg, m_split[0]))
             return m_split[0]
@@ -46,8 +56,8 @@ class SpamDetectorConsumer(QueueConsumer):
         counter = collections.Counter(self.message_bin)
         msg = counter.most_common(1)[0][0]
         data = {
-            'channel' : self.data_bin[0].get('channel'),
-            'message' : msg
+            'channel': self.data_bin[0].get('channel'),
+            'message': msg
         }
         data_json = json.dumps(data)
         try:
@@ -71,7 +81,9 @@ class SpamDetectorConsumer(QueueConsumer):
                 diff = end_time - self.start_time
                 if len(self.message_bin) < self.minimum_population:
                     log_info("accumulating bin {0:.2f}/seconds".format(diff))
-                self.message_bin.append(self.collapse_message(data.get('message')))
+                self.message_bin.append(
+                    self.collapse_message(data.get('message'))
+                )
                 self.data_bin.append(data)
                 unique_perc = self.calculate_unique_distribution()
                 if len(self.message_bin) > self.minimum_population:

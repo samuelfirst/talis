@@ -5,6 +5,7 @@ from talis import config
 from talis import log
 from talis.kafka.consumer import TalisConsumer
 
+
 class StdoutConsumer(TalisConsumer, threading.Thread):
 
     def __init__(self, data_processor, *args, **kwargs):

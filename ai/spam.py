@@ -3,17 +3,18 @@ This chat message consumer will make the bot more
 cancerous by participating in events where spam
 becomes highly concentrated
 '''
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
+import os
+import sys
 import time
 import threading
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
 
 from queue import Queue
 
 from talis import config
 from talis import log
-
 from talis.kafka import SpamDetectorConsumer
 from talis.kafka import DequeueProducer
 from talis.processor import JsonProcessor
