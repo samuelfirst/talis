@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     bot_message_dequeue = DequeueProducer(
         bot_message_queue,
-        json_processor,
         topic=config.get('KAFKA_BOT_MESSAGE_TOPIC'),
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST')
     )

@@ -1,6 +1,6 @@
 import threading
 
-
+from talis import config
 from talis import log
 from talis.kafka.producer import TalisProducer
 
@@ -12,7 +12,7 @@ class DequeueProducer(TalisProducer, threading.Thread):
 
         self.set_queue(queue)
         log.setLevel(config.log_level())
-        
+
     def run(self):
         while True:
             try:
