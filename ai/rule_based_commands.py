@@ -33,7 +33,7 @@ if __name__ == "__main__":
     )
     bot_message_dequeue.setDaemon(True)
 
-    rule_based_commands = CommandConsumer.with_thread(
+    rule_based_commands = CommandConsumer(
         commands,
         bot_message_queue,
         stop_event,

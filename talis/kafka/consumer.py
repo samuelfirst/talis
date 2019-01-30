@@ -1,5 +1,6 @@
 from kafka import KafkaConsumer
 
+from talis import log
 from talis.kafka.base import TalisKafkaBase
 
 class TalisConsumer(TalisKafkaBase):
@@ -10,5 +11,6 @@ class TalisConsumer(TalisKafkaBase):
         del kwargs['topic']
         try:
             self.consumer = KafkaConsumer(self.topic, *args, **kwargs)
+            log.info("set consumer to {}".format(self.topic))
         except:
             raise

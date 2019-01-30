@@ -24,7 +24,6 @@ if __name__ == "__main__":
     consumer = QueueConsumer(
         spam_message_queue,
         stop_event,
-        json_processor,
         topic=config.get('topic', config.get('KAFKA_BOT_MESSAGE_TOPIC')),
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         auto_offset_reset=config.get('auto_offset_reset', 'latest')

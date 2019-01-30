@@ -145,6 +145,7 @@ class TwitchChat(threading.Thread):
                     log.debug("{0}: {1}".format(username, msg))
                     data = {'channel' : self.channel, 'username': username, 'message': msg}
                     self.chat_queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
+                    log.info("send to chat_queue {}".format(msg))
                 except:
                     self.close()
 

@@ -42,7 +42,6 @@ if __name__ == "__main__":
     # waits for consumer to calculate
     bot_message_producer = DequeueProducer(
         spam_message_queue,
-        json_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
     )

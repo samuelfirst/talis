@@ -26,7 +26,6 @@ if __name__ == "__main__":
     bot_message_consumer = QueueConsumer(
         bot_message_queue,
         stop_event,
-        json_processor,
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC"),
         auto_offset_reset="latest",
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
@@ -35,7 +34,6 @@ if __name__ == "__main__":
 
     twitch_chat_dequeue = DequeueProducer(
         chat_queue,
-        json_processor,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get('KAFKA_TOPIC')
     )
