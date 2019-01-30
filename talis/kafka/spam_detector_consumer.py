@@ -3,16 +3,18 @@ import collections
 import json
 
 from talis import log
-from talis.kafka import QueueConsumer
+from talis.kafka.queue_consumer import QueueConsumer
 
 # fix
 def log_info(msg):
     print("AI SPAM: {}".format(msg))
 
 class SpamDetectorConsumer(QueueConsumer):
-    def __init__(self, minimum_population, unique_threshold, distribution_length_ms,
-            queue, stop_event, data_processor, *args, **kwargs):
-        super().__init__(queue, stop_event, data_processor, *args, **kwargs)
+    def __init__(self, minimum_population, unique_threshold,
+                 distribution_length_ms, queue, stop_event,
+                 data_processor, *args, **kwargs):
+        super(SpamDetectorConsumer, self).__init__(queue, stop_event, *args, **kwargs)
+        self.set_data_processor(data_processor)
         self.message_bin = []
         self.data_bin = []
         self.minimum_population = minimum_population

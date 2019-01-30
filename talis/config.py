@@ -14,6 +14,8 @@ config_parse.add('-oa', '--TWITCH_NICK_OAUTH_FILE', env_var='TWITCH_NICK_OAUTH_F
 class AppConfig(object):
 
     def __init__(self, config_parse):
+        if not isinstance(config_parse, configargparse.ArgParser):
+            raise TypeError("config_parse must be an `configargparse.ArgParser`")
         self.config_parse = config_parse
         self._calculate_others_init()
 

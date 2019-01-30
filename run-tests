@@ -15,12 +15,12 @@ clear_pyc() {
 }
 
 pip_install() {
-    pip install -r requirements.txt
+    pip install -qr requirements.txt
 }
 
 run_tests() {
     pip_install
-    pytest
+    pytest -p no:warnings -vv
     clear_trash
     clear_pyc
 }

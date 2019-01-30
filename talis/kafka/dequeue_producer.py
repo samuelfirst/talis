@@ -1,14 +1,17 @@
 import threading
 
-from talis import TalisQueue
+from talis import config
+from talis import log
 from talis.kafka.producer import TalisProducer
 
-class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
+class DequeueProducer(TalisProducer, threading.Thread):
 
-    def __init__(self, queue, data_processor, *args, **kwargs):
+    def __init__(self, queue, *args, **kwargs):
+        TalisProducer.__init__(self, *args, **kwargs)
         threading.Thread.__init__(self)
-        TalisProducer.__init__(self, data_processor, *args, **kwargs)
-        TalisQueue.__init__(self, queue)
+
+        self.set_queue(queue)
+        log.setLevel(config.log_level())
 
     def run(self):
         while True:
@@ -19,7 +22,7 @@ class DequeueProducer(threading.Thread, TalisProducer, TalisQueue):
             try:
                 self.producer.send(self.topic, data)
             except:
-                pass
+                raise
             self.sent += 1
             self.queue.task_done()
         self.producer.flush() # JON: CHECK THIS FLUSH

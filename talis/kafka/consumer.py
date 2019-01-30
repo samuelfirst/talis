@@ -1,16 +1,16 @@
 from kafka import KafkaConsumer
-from talis.processor import DataProcessor
 
-class TalisConsumer(object):
+from talis import log
+from talis.kafka.base import TalisKafkaBase
 
-    def __init__(self, data_processor, *args, **kwargs):
-        if not isinstance(data_processor, DataProcessor):
-            raise TypeError("The data_processor argument must be a valid DataProcessor object.")
+class TalisConsumer(TalisKafkaBase):
+
+    def __init__(self, *args, **kwargs):
         self.processed = 0
-        self.data_processor = data_processor
         self.topic = kwargs['topic']
         del kwargs['topic']
         try:
             self.consumer = KafkaConsumer(self.topic, *args, **kwargs)
+            log.info("set consumer to {}".format(self.topic))
         except:
             raise

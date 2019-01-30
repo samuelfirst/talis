@@ -1,6 +1,6 @@
 from talis.processor.processor import DataProcessor
 from talis.processor.json import JsonProcessor
 
-__ALL__ = [
+__all__ = [
     'DataProcessor', 'JsonProcessor'
 ]
