@@ -39,7 +39,8 @@ class TestFileConsumer(object):
             mock_set_data_proessor.assert_called_with(mock_data_processor)
 
     def test_formatted_file_name(
-        self, mock_stop_event, mock_data_processor, monkeypatch
+        self, mock_stop_event,
+        mock_data_processor, monkeypatch
     ):
         with mock.patch(
             'talis.kafka.consumer.KafkaConsumerFactory.create',
@@ -56,7 +57,8 @@ class TestFileConsumer(object):
             assert file_consumer.formatted_file_name() == "/data_topic.txt"
 
     def test_process_message(
-        self, mock_stop_event, mock_data_processor
+        self, mock_stop_event, mock_data_processor,
+        mock_kafka_messages, tmpdir
     ):
         with mock.patch(
             'talis.kafka.consumer.KafkaConsumerFactory.create',
@@ -68,3 +70,10 @@ class TestFileConsumer(object):
                 mock_data_processor,
                 topic="topic"
             )
+
+            processed = 0
+            for data in mock_kafka_messages:
+                file_consumer.process_message(data)
+                file_consumer.data_processor.parse.assert_called_with(data)
+                assert file_consumer.processed == processed + 1
+                processed += 1
