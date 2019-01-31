@@ -1,12 +1,13 @@
 '''
 Use this script to debug a kafka topic.
 '''
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from talis import config
 from talis import log
-
 from talis.kafka import StdoutConsumer
 from talis.processor import JsonProcessor
 

@@ -9,11 +9,14 @@ import threading
 from talis import log
 from talis.processor import JsonProcessor
 
+
 class TwitchChat(threading.Thread):
 
-    def __init__(self, username, oauth,
-                channel, chat_queue, command_queue,
-                stop_event):
+    def __init__(
+        self, username, oauth,
+        channel, chat_queue, command_queue,
+        stop_event
+    ):
         threading.Thread.__init__(self)
         self.username = username
         self.oauth = oauth
@@ -30,10 +33,13 @@ class TwitchChat(threading.Thread):
 
     @staticmethod
     def _logged_in_successful(data):
-        if re.match(r'^:(testserver\.local|tmi\.twitch\.tv)'
-                    r' NOTICE \* :'
-                    r'(Login unsuccessful|Error logging in|Improperly formatted auth)*$',
-                    data.strip()):
+        if re.match(
+            r'^:(testserver\.local|tmi\.twitch\.tv)'
+            r' NOTICE \* :'
+            r'(Login unsuccessful|Error logging in'
+            r'|Improperly formatted auth)*$',
+            data.strip()
+        ):
             return False
         else:
             return True
@@ -143,8 +149,14 @@ class TwitchChat(threading.Thread):
                 msg = received[0]["message"]
                 try:
                     log.debug("{0}: {1}".format(username, msg))
-                    data = {'channel' : self.channel, 'username': username, 'message': msg}
-                    self.chat_queue.put_nowait(bytes(self.data_processor.format(data), 'utf-8'))
+                    data = {
+                        'channel': self.channel,
+                        'username': username,
+                        'message': msg
+                    }
+                    self.chat_queue.put_nowait(
+                        bytes(self.data_processor.format(data), 'utf-8')
+                    )
                     log.info("send to chat_queue {}".format(msg))
                 except:
                     self.close()

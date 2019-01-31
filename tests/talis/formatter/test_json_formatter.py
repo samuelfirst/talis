@@ -19,13 +19,19 @@ invalid_types = [
     (b"", TypeError)
 ]
 
+
 def test_json_formatter_type():
-    assert True == issubclass(JsonFormatter, Formatter), 'JsonFormatter must be of instance `Formatter`'
+    assert issubclass(JsonFormatter, Formatter) is True, (
+        'JsonFormatter '
+        'must be of instance `Formatter`'
+    )
+
 
 @pytest.mark.parametrize('invalid,expected', invalid_types)
 def test_json_formatter_invalid_type(invalid, expected):
     with pytest.raises(expected) as e_info:
         JsonFormatter().format(invalid)
+
 
 @pytest.mark.parametrize('valid,expected', valid_data)
 def test_json_formatter_valid_type(valid, expected):

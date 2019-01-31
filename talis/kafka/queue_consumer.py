@@ -3,6 +3,7 @@ import json
 
 from talis.kafka.consumer import TalisConsumer
 
+
 class QueueConsumer(TalisConsumer, threading.Thread):
 
     def __init__(self, queue, stop_event, *args, **kwargs):

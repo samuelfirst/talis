@@ -3,6 +3,7 @@ import logging
 
 from talis.log import default_handler, log
 
+
 @pytest.fixture(autouse=True)
 def reset_logging(pytestconfig):
     root_handlers = logging.root.handlers[:]
@@ -27,6 +28,7 @@ def reset_logging(pytestconfig):
 
     if logging_plugin:
         pytestconfig.pluginmanager.register(logging_plugin, 'logging-plugin')
+
 
 def test_log():
     assert log.name == 'talis.app'

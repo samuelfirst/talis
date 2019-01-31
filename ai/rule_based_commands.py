@@ -1,11 +1,12 @@
 '''
 Use this script to launch rule based commands
 '''
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
+import os
+import sys
 import queue
 import threading
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from talis import config
 from talis import log
@@ -15,15 +16,19 @@ from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
     # TODO: extract from commands.yml
-    commands =  {
-        '!git' : 'https://github.com/jk-',
-        '!bot' : "My name is Talis and I'm a Microservice NLP Twitch Bot written in Python utilizing Kafka and Zookeeper. For more info type !git"
+    commands = {
+        '!git': 'https://github.com/jk-',
+        '!bot': (
+            "My name is Talis and I'm a Microservice NLP "
+            "Twitch Bot written in Python utilizing Kafka and "
+            "Zookeeper. For more info type !git"
+        )
     }
 
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
-    json_processor  = JsonProcessor()
+    json_processor = JsonProcessor()
 
     bot_message_dequeue = DequeueProducer(
         bot_message_queue,

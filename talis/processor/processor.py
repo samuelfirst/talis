@@ -1,6 +1,7 @@
 from talis.parser import Parser
 from talis.formatter import Formatter
 
+
 class DataProcessor(object):
 
     def __init__(self, parser, formatter):
