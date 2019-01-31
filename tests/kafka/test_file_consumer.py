@@ -57,8 +57,10 @@ class TestFileConsumer(object):
             assert file_consumer.formatted_file_name() == "/data_topic.txt"
 
     def test_process_message(
-        self, mock_stop_event, mock_data_processor,
-        mock_kafka_messages, tmpdir
+        self,
+        mock_stop_event,
+        mock_data_processor,
+        mock_kafka_messages
     ):
         with mock.patch(
             'talis.kafka.consumer.KafkaConsumerFactory.create',
