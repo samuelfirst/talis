@@ -2,7 +2,7 @@ import pytest
 import threading
 
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, mock_open
 
 from talis.kafka import FileConsumer
 from talis.processor import DataProcessor
@@ -56,6 +56,7 @@ class TestFileConsumer(object):
 
             assert file_consumer.formatted_file_name() == "/data_topic.txt"
 
+    @patch("builtins.open", mock_open(read_data="data"))
     def test_process_message(
         self,
         mock_stop_event,
