@@ -60,3 +60,4 @@ python ai/consumer_test.py -kh localhost:9092
 - [ ] The messages AI/spam.py messages sent to the bot is user input and not escaped properly. Create an interface to filter out piped messages.
 - [ ] Build Kafka Schema for data construction
 - [ ] utf-8 all over the place, fix
+- [x] Travis

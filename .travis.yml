@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 sudo: false
 python:
@@ -14,4 +15,4 @@ cache:
 notifications:
   email:
     on_success: never
-    on_failure: always
+    on_failure: enver
