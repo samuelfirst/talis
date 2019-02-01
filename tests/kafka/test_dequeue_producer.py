@@ -12,14 +12,6 @@ from kafka import KafkaProducer
 
 class TestDequeueProducer(object):
 
-    def test_init_invalid(
-        self, mock_queue
-    ):
-        with pytest.raises(KeyError):
-            command_consumer = DequeueProducer(
-                mock_queue
-            )
-
     @patch.object(DequeueProducer, 'set_queue')
     def test_init_valid(
         self, mock_set_queue, mock_queue
