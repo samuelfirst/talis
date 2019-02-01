@@ -75,23 +75,23 @@ class TestSpamDetectorConsumer(object):
             )
             assert spam_detector_consumer.collapse_message(data) == expected
 
-    def test_send_bot_message(
-        self, mock_queue, mock_stop_event,
-        mock_data_processor, data, expected
-    ):
-        with mock.patch(
-            'talis.kafka.consumer.KafkaConsumerFactory.create',
-            return_value=None
-        ) as mocked_kafka_producer:
-            spam_detector_consumer = SpamDetectorConsumer(
-                15, .50, 10,
-                mock_queue, mock_stop_event, mock_data_processor,
-                topic="topics"
-            )
-            spam_detector_consumer.message_bin = [
-                "Kappa", "test", "talis"
-            ]
-            spam_detector_consumer.send_bot_message()
+    # def test_send_bot_message(
+    #     self, mock_queue, mock_stop_event,
+    #     mock_data_processor, data, expected
+    # ):
+    #     with mock.patch(
+    #         'talis.kafka.consumer.KafkaConsumerFactory.create',
+    #         return_value=None
+    #     ) as mocked_kafka_producer:
+    #         spam_detector_consumer = SpamDetectorConsumer(
+    #             15, .50, 10,
+    #             mock_queue, mock_stop_event, mock_data_processor,
+    #             topic="topics"
+    #         )
+    #         spam_detector_consumer.message_bin = [
+    #             "Kappa", "test", "talis"
+    #         ]
+    #         spam_detector_consumer.send_bot_message()
 
     def test_process_message(self):
         pass
