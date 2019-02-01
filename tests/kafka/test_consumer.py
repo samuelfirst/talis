@@ -12,12 +12,13 @@ from kafka import KafkaConsumer
 class TestConsumerFactory(object):
 
     @patch.object(KafkaConsumerFactory, '__init__', return_value=None)
-    def test_create(self, mocked_init):
+    @patch.object(KafkaConsumerFactory, 'create', return_value="called")
+    def test_create(self, mocked_kafka_consumer, mocked_init):
         kafka_consumer_factory = KafkaConsumerFactory.create(
-            'topic', topic='testing'
+            'topic'
         )
         mocked_init.assert_not_called()
-        assert isinstance(kafka_consumer_factory, KafkaConsumer)
+        assert kafka_consumer_factory == "called"
 
 
 class TestConsumer(object):
