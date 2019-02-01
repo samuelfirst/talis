@@ -23,5 +23,5 @@ class TestProducer(object):
 
     @patch.object(KafkaProducerFactory, 'create', return_value="called")
     def test_init(self, mocked_kafka_producer_factory):
-        talis_producer = TalisProducer()
-        assert talis_producer.producer == 'called'
+        with pytest.raises(KeyError):
+            talis_producer = TalisProducer()
