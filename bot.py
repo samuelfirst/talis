@@ -49,6 +49,10 @@ if __name__ == "__main__":
     )
     twitch_chat_producer.connect()
 
+    if config.get('channels'):
+        for i in config.get('channels'):
+            twitch_chat_producer.join_channel(i)
+
     try:
         twitch_chat_producer.start()
         twitch_chat_dequeue.start()

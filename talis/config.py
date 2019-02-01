@@ -19,6 +19,8 @@ config_parse.add('-n', '--TWITCH_NICK', env_var='TWITCH_NICK',
 config_parse.add('-oa', '--TWITCH_NICK_OAUTH_FILE',
                  env_var='TWITCH_NICK_OAUTH_FILE',
                  help='The Twitch Nick oAuth File')
+config_parse.add('-j', '--channels', nargs="+",
+                 help='The Twitch Nick oAuth File')
 
 
 class AppConfig(object):

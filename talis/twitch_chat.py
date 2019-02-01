@@ -115,6 +115,7 @@ class TwitchChat(threading.Thread):
 
     def join_channel(self, channel):
         self.s.send(('JOIN #%s\r\n' % channel).encode('utf-8'))
+        log.info("JOINED {}".format(channel))
 
     def send_chat_message(self, message):
         self._send("PRIVMSG #{0} :{1}".format(self.channel, message))
@@ -147,17 +148,17 @@ class TwitchChat(threading.Thread):
             if received:
                 username = received[0]["username"]
                 msg = received[0]["message"]
+                channel = received[0]["channel"].replace("#", "")
                 try:
-                    log.debug("{0}: {1}".format(username, msg))
                     data = {
-                        'channel': self.channel,
+                        'channel': channel,
                         'username': username,
                         'message': msg
                     }
                     self.chat_queue.put_nowait(
                         bytes(self.data_processor.format(data), 'utf-8')
                     )
-                    log.info("send to chat_queue {}".format(msg))
+                    log.info("({0}) {1}: {2}".format(channel, username, msg))
                 except:
                     self.close()
 
