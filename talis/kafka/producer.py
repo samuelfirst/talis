@@ -20,4 +20,5 @@ class TalisProducer(TalisKafkaBase):
     def __init__(self, *args, **kwargs):
         super(TalisProducer, self).__init__()
         self.sent = 0
+        self.topic = kwargs['topic']
         self.producer = KafkaProducerFactory.create(*args, **kwargs)
