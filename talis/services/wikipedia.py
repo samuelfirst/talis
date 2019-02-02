@@ -1,38 +1,29 @@
 '''
-This chat message consumer will make the bot more
-cancerous by participating in events where spam
-becomes highly concentrated
+This AI will provide the ability for the bot to
+connect to a wikipedia article and answer a question
 '''
+import queue
+import threading
 import os
 import sys
-import time
-import threading
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-
-from queue import Queue
+sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 from talis import config
 from talis import log
-from talis.kafka import SpamDetectorConsumer
+from talis.kafka import WikiConsumer
 from talis.kafka import DequeueProducer
 from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
-
     # The commands (spam) to send to the botKappa
-    spam_message_queue = Queue()
+    chat_queue = Queue()
     stop_event = threading.Event()
-
     json_processor = JsonProcessor()
 
     # consume a kafka topic
-    consumer = SpamDetectorConsumer(
-        config.get('minimum_population', 10),
-        config.get('unique_threshold', .4),
-        config.get('distribution_length_sec', 10),
-        spam_message_queue,
+    consumer = WikiConsumer(
+        chat_queue,
         stop_event,
         json_processor,
         topic=config.get('KAFKA_TOPIC'),
@@ -42,7 +33,7 @@ if __name__ == "__main__":
 
     # waits for consumer to calculate
     bot_message_producer = DequeueProducer(
-        spam_message_queue,
+        chat_queue,
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
         topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
     )

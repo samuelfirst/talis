@@ -7,9 +7,11 @@ from talis.kafka.stdout_consumer import StdoutConsumer
 from talis.kafka.base import TalisKafkaBase
 from talis.kafka.producer import TalisProducer
 from talis.kafka.consumer import TalisConsumer
+from talis.kafka.wiki_consumer import WikiConsumer
 
 __all__ = [
     'TalisKafkaBase', 'TalisConsumer', 'TalisProducer',
     'CommandConsumer', 'DequeueProducer', 'FileConsumer',
-    'QueueConsumer', 'SpamDetectorConsumer', 'StdoutConsumer'
+    'QueueConsumer', 'SpamDetectorConsumer', 'StdoutConsumer',
+    'WikiConsumer'
 ]

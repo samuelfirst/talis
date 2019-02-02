@@ -3,9 +3,8 @@ user this script to send a bot command
 '''
 import os
 import sys
-import argparse
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 from kafka import KafkaProducer
 

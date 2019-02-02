@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
 import logging
-import sys
-import os.path
 import time
 import argparse
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 try:
     import cv2
     import streamlink
 except ImportError:
     sys.stderr.write(
-        "This example requires opencv-python and "
+        "Requires opencv-python and "
         "streamlink is installed"
     )
     raise

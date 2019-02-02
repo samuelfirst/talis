@@ -17,6 +17,6 @@ class StdoutConsumer(TalisConsumer, threading.Thread):
 
     def run(self):
         for msg in self.consumer:
-            data = self.data_processor.parse(msg.value)
-            log.info(data)
+            # data = self.data_processor.parse(msg.value)
+            log.info(msg)
             self.processed += 1
