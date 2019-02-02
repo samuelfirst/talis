@@ -11,8 +11,12 @@ class Wikipedia(object):
 
     @cached(cache=TTLCache(maxsize=4096, ttl=600))
     def get_content(self, topic):
-        searched = self.search(topic)
-        self.raw_data = wikipedia.page(searched[0]).content
+        try:
+            searched = self.search(topic)
+            self.raw_data = wikipedia.page(searched[0]).content
+        except:
+            self.raw_data = None
+            return self.raw_data
         return self.normalize()
 
     def search(self, topic):

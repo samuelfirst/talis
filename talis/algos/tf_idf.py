@@ -6,7 +6,7 @@ import spacy
 import re
 import logging
 
-from spacy.symbols import nsubj, VERB, PROPN, NOUN, amod, attr
+from spacy.symbols import nsubj, VERB, PROPN, NOUN, amod, attr, ADJ
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -50,19 +50,7 @@ class TFIDF(object):
 
         proper_nouns = []
         for token in doc:
-            print(token.string, token.pos_, token.dep_, token.head.pos_)
-            if (
-                (
-                    (token.pos == PROPN or token.pos == NOUN) and
-                    (token.dep != nsubj and token.dep != attr)
-                ) or
-                (
-                    token.dep == amod and token.head.pos == NOUN
-                )
-            ):
-                print(token.dep_)
-                print(attr)
-                print(token.dep)
+            if (token.dep == PROPN or token.dep == NOUN):
                 proper_nouns.append(token.string)
 
         if not len(proper_nouns):
@@ -76,11 +64,14 @@ class TFIDF(object):
                     if (
                         token.pos == VERB or
                         token.pos == NOUN or
-                        token.pos == PROPN
+                        token.pos == PROPN or
+                        token.pos == ADJ
                     ) and flag:
                         print("added {}".format(token_str))
                         proper_nouns.append(token_str)
 
+        if "who" in proper_nouns:
+            proper_nouns.remove("who")
         if len(proper_nouns):
             log.info("Setting Subject: {}".format(" ".join(proper_nouns)))
             self.subject = " ".join(proper_nouns)
