@@ -1,1 +1,4 @@
-pace22 dansgaming destiny sodapoppin tfue yassuo aydan kamolrf
+pace22 dansgaming destiny sodapoppin tfue yassuo aydan kamolrf couragejd mongraal method sco gingitv
+
+
+python bot.py -tc jonthomask -kh localhost:9092 -j pace22 dansgaming destiny sodapoppin tfue yassuo aydan kamolrf couragejd mongraal method sco gingitv

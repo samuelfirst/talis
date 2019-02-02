@@ -11,7 +11,7 @@ try:
     import streamlink
 except ImportError:
     sys.stderr.write(
-        "This example requires opencv-python and "
+        "Requires opencv-python and "
         "streamlink is installed"
     )
     raise

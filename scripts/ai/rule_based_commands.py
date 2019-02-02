@@ -6,7 +6,7 @@ import sys
 import queue
 import threading
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from talis import config
 from talis import log
