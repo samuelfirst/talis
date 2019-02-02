@@ -55,13 +55,15 @@ class TFIDF(object):
                 if token_str == "is" or token_str == "was":
                     flag = not flag
                     continue
-                if (token.pos == VERB or token.pos == NOUN) and flag:
+                if (token.pos == VERB or token.pos == NOUN or token.pos == PROPN) and flag:
                     proper_nouns.append(token_str)
 
         if not len(proper_nouns):
             for token in doc:
-                if (token.pos == PROPN):
+                if (token.pos == PROPN or token.pos == NOUN):
                     proper_nouns.append(token.string)
+                    if token.pos == PROPN:
+                        break
 
         if len(proper_nouns):
             log.info("Setting Subject: {}".format(" ".join(proper_nouns)))
