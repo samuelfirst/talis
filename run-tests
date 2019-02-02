@@ -18,6 +18,10 @@ pip_install() {
     pip install -qr requirements.txt
 }
 
+spacy() {
+    python -m spacy download en
+}
+
 run_tests() {
     pip_install
     pytest --codestyle -p no:warnings -vv

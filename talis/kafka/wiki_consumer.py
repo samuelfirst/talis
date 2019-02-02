@@ -28,25 +28,25 @@ class WikiConsumer(QueueConsumer, threading.Thread):
 
         command = data.get('message')
 
-        test = re.findall(r'(^!wiki )(\".+\") (.+)', command)
+        test = re.findall(r'(^!q )(.+)', command)
 
-        if test and len(test[0]) == 3:
+        if test and len(test[0]) == 2:
             test = test[0]
             command = test[0].strip()
-            topic = test[1].replace('"', "")
-            question = test[2]
-            print(command, topic, question)
-        else:
-            command = False
+            question = test[1]
 
-        if command == '!wiki':
-            print("setting wiki")
+            print("Question: {}".format(question))
+
             try:
-                self.algo.set_data(self.wiki.get_content(topic))
+                self.algo.set_subject(question)
+                if self.algo.subject is None:
+                    response = "I can't find the subject, sorry."
+                else:
+                    self.algo.set_data(self.wiki.get_content(self.algo.subject))
+                    response = self.algo.answer(question)
             except:
                 raise
 
-            response = self.algo.answer(question)
             if response is not None:
                 data_to_send = TwitchKafkaSchema.as_dict(
                     data.get('channel'),
