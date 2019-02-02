@@ -8,6 +8,10 @@ before_install:
 install:
   - travis_wait travis_retry pip install -r requirements.txt
 script: pytest -p no:warnings -vv --pep8
+branches:
+  only:
+  - master
+  - stable
 cache:
   - apt
   - directories:
