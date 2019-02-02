@@ -42,7 +42,9 @@ class WikiConsumer(QueueConsumer, threading.Thread):
                 if self.algo.subject is None:
                     response = "I can't find the subject, sorry."
                 else:
-                    self.algo.set_data(self.wiki.get_content(self.algo.subject))
+                    self.algo.set_data(
+                        self.wiki.get_content(self.algo.subject)
+                    )
                     response = self.algo.answer(question)
             except:
                 raise

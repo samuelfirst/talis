@@ -6,7 +6,7 @@ import spacy
 import re
 import logging
 
-from spacy.symbols import nsubj, VERB, PROPN, NOUN
+from spacy.symbols import nsubj, VERB, PROPN, NOUN, amod, attr
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -14,6 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from talis import log
 
 log.setLevel(logging.INFO)
+
 
 class TFIDF(object):
 
@@ -48,22 +49,37 @@ class TFIDF(object):
         doc = self.nlp(question)
 
         proper_nouns = []
-        if ("is" or "was") in question:
-            flag = False
-            for token in doc:
-                token_str = token.string.strip()
-                if token_str == "is" or token_str == "was":
-                    flag = not flag
-                    continue
-                if (token.pos == VERB or token.pos == NOUN or token.pos == PROPN) and flag:
-                    proper_nouns.append(token_str)
+        for token in doc:
+            print(token.string, token.pos_, token.dep_, token.head.pos_)
+            if (
+                (
+                    (token.pos == PROPN or token.pos == NOUN) and
+                    (token.dep != nsubj and token.dep != attr)
+                ) or
+                (
+                    token.dep == amod and token.head.pos == NOUN
+                )
+            ):
+                print(token.dep_)
+                print(attr)
+                print(token.dep)
+                proper_nouns.append(token.string)
 
         if not len(proper_nouns):
-            for token in doc:
-                if (token.pos == PROPN or token.pos == NOUN):
-                    proper_nouns.append(token.string)
-                    if token.pos == PROPN:
-                        break
+            if ("is" or "was") in question:
+                flag = False
+                for token in doc:
+                    token_str = token.string.strip()
+                    if token_str == "is" or token_str == "was":
+                        flag = not flag
+                        continue
+                    if (
+                        token.pos == VERB or
+                        token.pos == NOUN or
+                        token.pos == PROPN
+                    ) and flag:
+                        print("added {}".format(token_str))
+                        proper_nouns.append(token_str)
 
         if len(proper_nouns):
             log.info("Setting Subject: {}".format(" ".join(proper_nouns)))
@@ -90,7 +106,10 @@ class TFIDF(object):
             self.ai_response = "I'm sorry, I don't know the answer."
         else:
             if (self.sent_tokens[idx] == ""):
-                self.ai_response = "I'm sorry, I can't find an answer on that page."
+                self.ai_response = (
+                    "I'm sorry, I can't find an answer "
+                    "on that page."
+                )
             else:
                 self.ai_response = self.sent_tokens[idx]
         self.sent_tokens.remove(input_text.lower())
