@@ -1,6 +1,7 @@
 import wikipedia
 import re
 
+
 class Wikipedia(object):
 
     def __init__(self):

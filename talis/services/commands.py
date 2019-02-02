@@ -1,12 +1,12 @@
 '''
 Use this script to launch rule based commands
 '''
-import os
-import sys
 import queue
 import threading
+import os
+import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 from talis import config
 from talis import log

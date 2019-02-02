@@ -3,13 +3,12 @@ This script will attach and listen for
 bot messages (temporary location for testing) and will
 generate a 10 second clip of the channel where "hype" occurred
 '''
+import queue
+import threading
 import os
 import sys
-import threading
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-from queue import Queue
+sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 from talis import config
 from talis import log
