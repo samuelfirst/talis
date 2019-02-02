@@ -20,7 +20,7 @@ pip_install() {
 
 run_tests() {
     pip_install
-    pytest -p no:warnings -vv --pep8
+    pytest --codestyle -p no:warnings -vv
     clear_trash
     clear_pyc
 }

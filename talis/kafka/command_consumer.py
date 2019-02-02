@@ -3,6 +3,7 @@ import threading
 from talis import log
 
 from talis.kafka.queue_consumer import QueueConsumer
+from talis.kafka.twitch_schema import TwitchKafkaSchema
 
 
 class CommandConsumer(QueueConsumer, threading.Thread):
@@ -20,10 +21,10 @@ class CommandConsumer(QueueConsumer, threading.Thread):
         command = data.get('message')
         if command in self.commands.keys():
             response = self.commands[command]
-            data_to_send = {
-                'channel': data.get('channel'),
-                'message': response
-            }
+            data_to_send = TwitchKafkaSchema.as_dict(
+                data.get('channel'),
+                response
+            )
             self.queue.put_nowait(
                 bytes(
                     self.data_processor.format(data_to_send),

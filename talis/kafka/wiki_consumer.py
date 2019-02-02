@@ -47,11 +47,10 @@ class WikiConsumer(QueueConsumer, threading.Thread):
 
             response = self.algo.answer(question)
             if response is not None:
-
-                data_to_send = {
-                    'channel': data.get('channel'),
-                    'message': response
-                }
+                data_to_send = TwitchKafkaSchema.as_dict(
+                    data.get('channel'),
+                    response
+                )
                 self.queue.put_nowait(
                     bytes(
                         self.data_processor.format(data_to_send),
