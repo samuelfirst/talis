@@ -8,10 +8,11 @@ from talis.kafka.base import TalisKafkaBase
 from talis.kafka.producer import TalisProducer
 from talis.kafka.consumer import TalisConsumer
 from talis.kafka.wiki_consumer import WikiConsumer
+from talis.kafka.twitch_schema import TwitchKafkaSchema
 
 __all__ = [
     'TalisKafkaBase', 'TalisConsumer', 'TalisProducer',
     'CommandConsumer', 'DequeueProducer', 'FileConsumer',
     'QueueConsumer', 'SpamDetectorConsumer', 'StdoutConsumer',
-    'WikiConsumer'
+    'WikiConsumer', 'TwitchKafkaSchema'
 ]

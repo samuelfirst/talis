@@ -84,4 +84,5 @@ class AppConfig(object):
                 return self.config[1][variable_i + 1]
         return default or None
 
+
 config = AppConfig(config_parse)

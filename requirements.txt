@@ -19,11 +19,12 @@ opencv-python==4.0.0.21
 pep8==1.7.1
 pluggy==0.8.1
 py==1.7.0
+pycodestyle==2.5.0
 pycryptodome==3.7.3
 PySocks==1.6.8
 pytest==4.1.1
 pytest-cache==1.0
-pytest-pep8==1.0.6
+pytest-codestyle==1.4.0
 python-dateutil==2.7.5
 python-dotenv==0.10.1
 requests==2.21.0

@@ -4,6 +4,7 @@ import json
 
 from talis import log
 from talis.kafka.queue_consumer import QueueConsumer
+from talis.kafka.twitch_schema import TwitchKafkaSchema
 
 
 class SpamDetectorConsumer(QueueConsumer):
@@ -50,11 +51,11 @@ class SpamDetectorConsumer(QueueConsumer):
     def send_bot_message(self):
         counter = collections.Counter(self.message_bin)
         msg = counter.most_common(1)[0][0]
-        data = {
-            'channel': self.data_bin[0].get('channel'),
-            'message': msg
-        }
-        data_json = json.dumps(data)
+        data = TwitchKafkaSchema.as_dict(
+            self.data_bin[0].get('channel'),
+            msg
+        )
+        data_json = self.data_processor.format(data)
         try:
             log.info("====== SPAM TRIGGER ======".format(msg))
             log.info("{0}".format(data_json))
