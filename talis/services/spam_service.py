@@ -19,7 +19,7 @@ from talis.processor import JsonProcessor
 if __name__ == "__main__":
 
     # The commands (spam) to send to the botKappa
-    spam_message_queue = Queue()
+    spam_message_queue = queue.Queue()
     stop_event = threading.Event()
 
     json_processor = JsonProcessor()

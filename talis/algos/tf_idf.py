@@ -2,7 +2,6 @@ import nltk
 import numpy as np
 import random
 import string
-import re
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -23,15 +22,7 @@ class TFIDF(object):
         self.ai_response = None
 
     def set_data(self, raw_data):
-        self.raw_data = raw_data.replace("\n", " ").lower()
-        self.raw_data = re.sub(r'(== .*? ==).+', '', self.raw_data, flags=re.I)
-        self.raw_data = re.sub(r'(=== .*? ===)', '', self.raw_data)
-        self.raw_data = re.sub(r'\(; ', '(', self.raw_data)
-        self.raw_data = re.sub(r'\( ', '(', self.raw_data)
-        self.raw_data = re.sub(r'\(listen\);', '', self.raw_data)
-        self.raw_data = re.sub(r'\[o\.s\.', '', self.raw_data)
-        self.raw_data = re.sub(r'\]', '', self.raw_data)
-        self.raw_data = re.sub(r' +', ' ', self.raw_data)
+        self.raw_data = raw_data
         self.sent_tokens = nltk.sent_tokenize(self.raw_data)
         self.word_tokens = nltk.word_tokenize(self.raw_data)
 

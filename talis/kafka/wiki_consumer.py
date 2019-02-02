@@ -4,6 +4,7 @@ import re
 from talis import log
 
 from talis.kafka.queue_consumer import QueueConsumer
+from talis.kafka.twitch_schema import TwitchKafkaSchema
 
 from talis.vendor import Wikipedia
 from talis.algos import TFIDF

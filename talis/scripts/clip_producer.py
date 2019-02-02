@@ -17,7 +17,7 @@ from talis.kafka import QueueConsumer
 from talis.processor import JsonProcessor
 
 if __name__ == "__main__":
-    spam_message_queue = Queue()
+    spam_message_queue = queue.Queue()
     stop_event = threading.Event()
     json_processor = JsonProcessor()
 
