@@ -16,7 +16,7 @@ This is the next general step into creating a hive mind AI that can attach and d
 
 You can view the other scripts in the AI folder.
 
-![al text](https://i.imgur.com/jryMprD.png)
+![test image size](https://i.imgur.com/jryMprD.png){:height="50%" width="50%"}
 
 ### To run:
 
