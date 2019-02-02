@@ -1,14 +1,17 @@
 import wikipedia
 import re
 
+from cachetools import cached, TTLCache
+
 
 class Wikipedia(object):
 
     def __init__(self):
         self.raw_data = None
 
+    @cached(cache=TTLCache(maxsize=4096, ttl=600))
     def get_content(self, topic):
-        searched = wikipedia.search(topic)
+        searched = self.search(topic)
         self.raw_data = wikipedia.page(searched[0]).content
         return self.normalize()
 
