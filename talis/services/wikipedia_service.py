@@ -66,7 +66,7 @@ if __name__ == "__main__":
                     log.info("Question: {}".format(question))
 
                     threading.Thread(
-                        target=wiki_consumer,
+                        target=wiki,
                         args=(data, question, bot_message_queue,),
                         name="wiki consumer thread"
                     ).start()

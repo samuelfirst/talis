@@ -1,16 +1,16 @@
 import threading
 
 from talis import log
-from talis import twitch_schema
+from talis.twitch_schema import twitch_schema
 from talis.algos import TFIDF
 from talis.vendor import Wikipedia
 from talis.algos import subject_parser
 
 
 def wiki(data, question, bot_message_queue):
-    wiki_consumer.wiki = Wikipedia()
-    wiki_consumer.algo = TFIDF()
-    wiki_consumer.response = None
+    wiki.wiki = Wikipedia()
+    wiki.algo = TFIDF()
+    wiki.response = None
 
     try:
         subject = subject_parser(question)
@@ -19,19 +19,19 @@ def wiki(data, question, bot_message_queue):
             return
 
         log.info("Received subject {}".format(subject))
-        wiki_consumer.algo.set_data(wiki_consumer.wiki.get_content(subject))
+        wiki.algo.set_data(wiki.wiki.get_content(subject))
         log.info("Procsesed subject")
 
         log.info("Getting Answer")
-        wiki_consumer.response = wiki_consumer.algo.answer(question)
-        log.info("Got Answer {}".format(wiki_consumer.response))
+        wiki.response = wiki.algo.answer(question)
+        log.info("Got Answer {}".format(wiki.response))
     except:
         raise
 
-    if wiki_consumer.response:
+    if wiki.response:
         data_answer = twitch_schema.as_dict(
             data.get('channel'),
-            wiki_consumer.response
+            wiki.response
         )
         bot_message_queue.put_nowait(data_answer)
         log.info('Wiki processed')
