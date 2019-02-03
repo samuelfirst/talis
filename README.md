@@ -62,3 +62,8 @@ python ai/consumer_test.py -kh localhost:9092
 - [ ] Build Kafka Schema for data construction
 - [ ] utf-8 all over the place, fix
 - [x] Travis
+- [ ] Threads: NLP revealed thread issue with multiqueries
+
+## Feature List:
+- [ ] The ability to send the bot to any channel
+- [ ] Make it learn the word of God

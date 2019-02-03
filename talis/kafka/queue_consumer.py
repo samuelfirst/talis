@@ -16,6 +16,7 @@ class QueueConsumer(TalisConsumer, threading.Thread):
     def run(self):
         for msg in self.consumer:
             self.queue.put_nowait(msg.value)
+            print(msg.value)
             self.processed += 1
             if self.stop_event.is_set():
                 break
