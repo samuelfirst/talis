@@ -1,19 +1,13 @@
 import nltk
-import numpy as np
-import random
 import string
-import spacy
 import re
 import logging
 
-from spacy.symbols import nsubj, VERB, PROPN, NOUN, amod, attr, ADJ
+from talis import log
+log.setLevel(logging.INFO)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
-from talis import log
-
-log.setLevel(logging.INFO)
 
 
 class TFIDF(object):
@@ -21,25 +15,17 @@ class TFIDF(object):
     def __init__(self):
         nltk.download('punkt')
         nltk.download('wordnet')
-        self.nlp = spacy.load('en')
-        self.raw_data = ""
-        self.subject = None
+        self.data = ""
         self.sent_tokens = []
-        self.word_tokens = []
         self.lemmer = nltk.stem.WordNetLemmatizer()
         self.remove_punct_dict = dict(
             (ord(punct), None) for punct in string.punctuation
         )
-        self.ai_response = None
+        self.response = None
 
-    # assumes data is split by sentences
-    def set_doc(self, sent_tokens):
-        self.sent_tokens = sent_tokens
-
-    def set_data(self, raw_data):
-        self.raw_data = raw_data
-        self.sent_tokens = nltk.sent_tokenize(self.raw_data)
-        self.word_tokens = nltk.word_tokenize(self.raw_data)
+    def set_data(self, data):
+        self.data = data
+        self.sent_tokens = nltk.sent_tokenize(self.data)
 
     def LemTokens(self, tokens):
         return [self.lemmer.lemmatize(token) for token in tokens]
@@ -49,43 +35,7 @@ class TFIDF(object):
             nltk.word_tokenize(text.translate(self.remove_punct_dict))
         )
 
-    def set_subject(self, question):
-        doc = self.nlp(question)
-
-        proper_nouns = []
-        for token in doc:
-            if (token.dep == PROPN or token.dep == NOUN):
-                proper_nouns.append(token.string)
-
-        if not len(proper_nouns):
-            if ("is" or "was") in question:
-                flag = False
-                for token in doc:
-                    token_str = token.string.strip()
-                    if token_str == "is" or token_str == "was":
-                        flag = not flag
-                        continue
-                    if (
-                        token.pos == VERB or
-                        token.pos == NOUN or
-                        token.pos == PROPN or
-                        token.pos == ADJ
-                    ) and flag:
-                        print("added {}".format(token_str))
-                        proper_nouns.append(token_str)
-
-        if "who" in proper_nouns:
-            proper_nouns.remove("who")
-        if len(proper_nouns):
-            log.info("Setting Subject: {}".format(" ".join(proper_nouns)))
-            self.subject = " ".join(proper_nouns)
-        else:
-            self.subject = None
-
     def answer(self, input_text):
-        if self.subject is None:
-            self.ai_response = "I'm sorry, I can't find the subject"
-            return self.ai_response
         self.sent_tokens.append(input_text.lower())
         TfidfVec = TfidfVectorizer(
             tokenizer=self.LemNormalize,
@@ -98,14 +48,14 @@ class TFIDF(object):
         flat.sort()
         req_tfidf = flat[-2]
         if(req_tfidf == 0):
-            self.ai_response = None
+            self.response = "I'm sorry, I don't know the answer."
         else:
             if (self.sent_tokens[idx] == ""):
-                self.ai_response = (
+                self.response = (
                     "I'm sorry, I can't find an answer "
                     "on that page."
                 )
             else:
-                self.ai_response = self.sent_tokens[idx]
+                self.response = self.sent_tokens[idx]
         self.sent_tokens.remove(input_text.lower())
-        return self.ai_response
+        return self.response

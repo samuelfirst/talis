@@ -6,42 +6,70 @@ import queue
 import threading
 import os
 import sys
+import json
+import re
 
 sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
 from talis import config
 from talis import log
-from talis.kafka import WikiConsumer
-from talis.kafka import DequeueProducer
-from talis.processor import JsonProcessor
+from talis import push_queue
+from talis import dequeue
+from talis import wiki
+
+from kafka import KafkaConsumer
+from kafka import KafkaProducer
 
 if __name__ == "__main__":
     # The commands (spam) to send to the botKappa
-    chat_queue = queue.Queue()
+    bot_message_queue = queue.Queue()
     stop_event = threading.Event()
-    json_processor = JsonProcessor()
 
-    # consume a kafka topic
-    consumer = WikiConsumer(
-        chat_queue,
-        stop_event,
-        json_processor,
-        topic=config.get('KAFKA_TOPIC'),
-        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        auto_offset_reset=config.get('auto_offset_reset', 'latest')
+    kafka_consumer = KafkaConsumer(
+        config.get("KAFKA_TOPIC"),
+        bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST"),
+        auto_offset_reset="latest"
     )
 
-    # waits for consumer to calculate
-    bot_message_producer = DequeueProducer(
-        chat_queue,
+    kafka_producer = KafkaProducer(
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
-    bot_message_producer.setDaemon(True)
+
+    # Pushes commands to the bot from the
+    # bot_message_queue
+    kp_thread = threading.Thread(
+        target=dequeue,
+        args=(
+            kafka_producer,
+            config.get('KAFKA_BOT_MESSAGE_TOPIC'),
+            bot_message_queue
+        ),
+        name="Kafka Chat Producer"
+    )
+    kp_thread.setDaemon(True)
 
     try:
-        consumer.start()
-        bot_message_producer.start()
+        kp_thread.start()
+        while not stop_event.is_set():
+            for msg in kafka_consumer:
+                data = json.loads(msg.value)
+                message = data.get('message')
+
+                split_message = re.findall(r'(^!q )(.+)', message)
+
+                if split_message and len(split_message[0]) == 2:
+                    split_message = split_message[0]
+                    command = split_message[0].strip()
+                    question = split_message[1]
+
+                    log.info("Question: {}".format(question))
+
+                    threading.Thread(
+                        target=wiki,
+                        args=(data, question, bot_message_queue,),
+                        name="wiki consumer thread"
+                    ).start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise

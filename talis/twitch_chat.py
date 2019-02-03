@@ -5,9 +5,9 @@ import fcntl
 import os
 import errno
 import threading
+import json
 
 from talis import log
-from talis.processor import JsonProcessor
 
 
 class TwitchChat(threading.Thread):
@@ -29,7 +29,6 @@ class TwitchChat(threading.Thread):
         self.stop_event = stop_event
         self.chat_queue = chat_queue
         self.command_queue = command_queue
-        self.data_processor = JsonProcessor()
 
     @staticmethod
     def _logged_in_successful(data):
@@ -93,8 +92,6 @@ class TwitchChat(threading.Thread):
 
             while self.current_channel != self.channel:
                 self.twitch_receive_messages()
-            else:
-                log.info("JOINED {0}".format(self.channel))
 
     def _push_from_buffer(self):
         if len(self.buffer) > 0:
@@ -155,9 +152,7 @@ class TwitchChat(threading.Thread):
                         'username': username,
                         'message': msg
                     }
-                    self.chat_queue.put_nowait(
-                        bytes(self.data_processor.format(data), 'utf-8')
-                    )
+                    self.chat_queue.put_nowait(data)
                     log.info("({0}) {1}: {2}".format(channel, username, msg))
                 except:
                     self.close()
@@ -167,10 +162,10 @@ class TwitchChat(threading.Thread):
                 if data is None:
                     return
                 try:
-                    data = self.data_processor.parse(data)
+                    data = json.loads(data)
                     message = data.get('message')
                     self.send_chat_message(message)
-                    log.debug("===Sent chat message {}===\n".format(message))
+                    log.debug("===Sent chat message {}===".format(message))
                 except:
                     raise
                 self.sent += 1
@@ -183,6 +178,7 @@ class TwitchChat(threading.Thread):
         while True:
             try:
                 msg = self.s.recv(4096).decode()
+                log.debug("{}".format(msg.strip("\r\n")))
             except socket.error as e:
                 err = e.args[0]
                 if err == errno.EAGAIN or err == errno.EWOULDBLOCK:

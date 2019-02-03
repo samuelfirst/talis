@@ -3,33 +3,35 @@ user this script to send a bot command
 '''
 import os
 import sys
+import json
 
 sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
-from kafka import KafkaProducer
-
 from talis import config
 from talis import log
-from talis.formatter import JsonFormatter
+
+from kafka import KafkaProducer
+from kafka import KafkaConsumer
+from talis import twitch_schema
 
 if __name__ == "__main__":
 
-    json_formatter = JsonFormatter()
     try:
         while True:
-            command = input("What command?\n")
+            command = input("What Message?\n")
             kafka_topic = config.get("KAFKA_BOT_MESSAGE_TOPIC")
-            # todo: format
-            data = {
-                'channel': config.get('TWITCH_CHANNEL'),
-                'message': command
-            }
-            producer = KafkaProducer(bootstrap_servers="localhost:9092")
-            producer.send(
-                kafka_topic,
-                bytes(json_formatter.format(data), 'utf-8')
+
+            kafka_producer = KafkaProducer(
+                bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
+                value_serializer=lambda v: json.dumps(v).encode('utf-8')
             )
-            producer.flush()
+
+            data = twitch_schema.as_dict(
+                config.get('TWITCH_CHANNEL'),
+                command
+            )
+
+            kafka_producer.send(kafka_topic, data)
     except (KeyboardInterrupt, SystemExit):
         raise
     except:

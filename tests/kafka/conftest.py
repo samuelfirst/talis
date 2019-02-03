@@ -2,10 +2,6 @@ import pytest
 import queue
 import threading
 
-from talis.kafka import CommandConsumer
-from talis.kafka import QueueConsumer
-from talis.processor import DataProcessor
-
 from unittest import mock
 from unittest.mock import patch
 
@@ -38,8 +34,3 @@ def mock_queue():
 @pytest.fixture
 def mock_stop_event():
     return mock.Mock(spec=threading.Event)
-
-
-@pytest.fixture
-def mock_data_processor():
-    return mock.Mock(spec=DataProcessor, autospec=True)
