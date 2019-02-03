@@ -16,6 +16,7 @@ def subject_parser(sentence):
 
     proper_nouns = []
     for token in doc:
+        print(token.string, token.dep_, token.pos_, token.head.pos_)
         if (token.dep == PROPN or token.dep == NOUN):
             proper_nouns.append(token.string)
 
@@ -35,6 +36,12 @@ def subject_parser(sentence):
                 ) and flag:
                     print("added {}".format(token_str))
                     proper_nouns.append(token_str)
+
+    # search head POS
+    if not len(proper_nouns):
+        for token in doc:
+            if (token.pos == PROPN or token.pos == NOUN):
+                proper_nouns.append(token.string)
 
     if "who" in proper_nouns:
         proper_nouns.remove("who")
