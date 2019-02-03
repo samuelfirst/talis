@@ -5,15 +5,20 @@ from collections import OrderedDict
 
 class TwitchFormatter(object):
 
-    def format(self, data):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def format(data):
         if not isinstance(data, str):
             raise TypeError(
                 "Data needs to be of type `str`"
             )
 
-        return self._format(data)
+        return TwitchFormatter._format(data)
 
-    def _format(self, data):
+    @staticmethod
+    def _format(data):
         '''
             remove .{1} <-- single character
             remove !() <- commands

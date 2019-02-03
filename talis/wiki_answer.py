@@ -7,10 +7,10 @@ from talis.vendor import Wikipedia
 from talis.algos import subject_parser
 
 
-def wiki(data, question, bot_message_queue):
-    wiki.wiki = Wikipedia()
-    wiki.algo = TFIDF()
-    wiki.response = None
+def wiki_answer(data, question, bot_message_queue):
+    wiki_answer.wiki_answer = Wikipedia()
+    wiki_answer.algo = TFIDF()
+    wiki_answer.response = None
 
     try:
         subject = subject_parser(question)
@@ -19,19 +19,19 @@ def wiki(data, question, bot_message_queue):
             return
 
         log.info("Received subject {}".format(subject))
-        wiki.algo.set_data(wiki.wiki.get_content(subject))
+        wiki_answer.algo.set_data(wiki_answer.wiki_answer.get_content(subject))
         log.info("Procsesed subject")
 
         log.info("Getting Answer")
-        wiki.response = wiki.algo.answer(question)
-        log.info("Got Answer {}".format(wiki.response))
+        wiki_answer.response = wiki_answer.algo.answer(question)
+        log.info("Got Answer {}".format(wiki_answer.response))
     except:
         raise
 
-    if wiki.response:
+    if wiki_answer.response:
         data_answer = twitch_schema.as_dict(
             data.get('channel'),
-            wiki.response
+            wiki_answer.response
         )
         bot_message_queue.put_nowait(data_answer)
         log.info('Wiki processed')
