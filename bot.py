@@ -1,16 +1,16 @@
 import queue
 import threading
+import json
 
-# config and logs
 from talis import config
 from talis import log
-
-# threads
+from talis import push_queue
+from talis import dequeue
 from talis import TwitchChat
-from talis.kafka import QueueConsumer
-from talis.kafka import CommandConsumer
-from talis.kafka import DequeueProducer
-from talis.processor import JsonProcessor
+
+from kafka import KafkaConsumer
+from kafka import KafkaProducer
+
 
 if __name__ == "__main__":
     config.add_oauth()
@@ -21,24 +21,32 @@ if __name__ == "__main__":
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
-    json_processor = JsonProcessor()
-
-    bot_message_consumer = QueueConsumer(
-        bot_message_queue,
-        stop_event,
-        topic=config.get("KAFKA_BOT_MESSAGE_TOPIC"),
-        auto_offset_reset="latest",
-        bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST")
+    kafka_consumer = KafkaConsumer(
+        config.get("KAFKA_BOT_MESSAGE_TOPIC"),
+        bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST"),
+        auto_offset_reset="latest"
     )
-    bot_message_consumer.setDaemon(True)
 
-    twitch_chat_dequeue = DequeueProducer(
-        chat_queue,
+    kafka_producer = KafkaProducer(
         bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        topic=config.get('KAFKA_TOPIC')
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
-    twitch_chat_dequeue.setDaemon(True)
 
+    kc_thread = threading.Thread(
+        target=push_queue,
+        args=(kafka_consumer, bot_message_queue, stop_event),
+        name="Kafka Bot Message Consumer"
+    )
+
+    kp_thread = threading.Thread(
+        target=dequeue,
+        args=(kafka_producer, config.get('KAFKA_TOPIC'), chat_queue),
+        name="Kafka Chat Producer"
+    )
+
+    # not picked up bot messages quick enough
+    # parse out a consumer to kafka
+    # and sending bot commands
     twitch_chat_producer = TwitchChat(
         config.get('TWITCH_NICK'),
         config.get('TWITCH_OAUTH_TOKEN'),
@@ -55,8 +63,8 @@ if __name__ == "__main__":
 
     try:
         twitch_chat_producer.start()
-        twitch_chat_dequeue.start()
-        bot_message_consumer.start()
+        kc_thread.start()
+        kp_thread.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         pass

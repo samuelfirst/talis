@@ -13,7 +13,7 @@ try:
     import streamlink
 except ImportError:
     sys.stderr.write(
-        "Requires opencv-python and "
+        "Requires that opencv-python and "
         "streamlink is installed"
     )
     raise

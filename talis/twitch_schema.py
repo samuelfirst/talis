@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 
-class TwitchKafkaSchema(NamedTuple):
+class twitch_schema(NamedTuple):
     channel: str
     message: str
 
