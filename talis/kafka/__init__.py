@@ -9,10 +9,11 @@ from talis.kafka.producer import TalisProducer
 from talis.kafka.consumer import TalisConsumer
 from talis.kafka.wiki_consumer import WikiConsumer
 from talis.kafka.twitch_schema import TwitchKafkaSchema
+from talis.kafka.twitch_nlp import TwitchNLP
 
 __all__ = [
     'TalisKafkaBase', 'TalisConsumer', 'TalisProducer',
     'CommandConsumer', 'DequeueProducer', 'FileConsumer',
     'QueueConsumer', 'SpamDetectorConsumer', 'StdoutConsumer',
-    'WikiConsumer', 'TwitchKafkaSchema'
+    'WikiConsumer', 'TwitchKafkaSchema', 'TwitchNLP'
 ]

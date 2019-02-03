@@ -170,7 +170,7 @@ class TwitchChat(threading.Thread):
                     data = self.data_processor.parse(data)
                     message = data.get('message')
                     self.send_chat_message(message)
-                    log.debug("Sent chat message {}".format(message))
+                    log.debug("===Sent chat message {}===\n".format(message))
                 except:
                     raise
                 self.sent += 1

@@ -32,6 +32,10 @@ class TFIDF(object):
         )
         self.ai_response = None
 
+    # assumes data is split by sentences
+    def set_doc(self, sent_tokens):
+        self.sent_tokens = sent_tokens
+
     def set_data(self, raw_data):
         self.raw_data = raw_data
         self.sent_tokens = nltk.sent_tokenize(self.raw_data)
@@ -94,7 +98,7 @@ class TFIDF(object):
         flat.sort()
         req_tfidf = flat[-2]
         if(req_tfidf == 0):
-            self.ai_response = "I'm sorry, I don't know the answer."
+            self.ai_response = None
         else:
             if (self.sent_tokens[idx] == ""):
                 self.ai_response = (
