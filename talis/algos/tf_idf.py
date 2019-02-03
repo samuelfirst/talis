@@ -23,6 +23,13 @@ class TFIDF(object):
         )
         self.response = None
 
+
+    def set_doc(self, doc):
+        self.data = doc
+        self.sent_tokens = self.data
+
+    # only used if the doc needs sentences
+    # parsed
     def set_data(self, data):
         self.data = data
         self.sent_tokens = nltk.sent_tokenize(self.data)

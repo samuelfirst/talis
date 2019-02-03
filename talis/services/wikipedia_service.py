@@ -15,7 +15,7 @@ from talis import config
 from talis import log
 from talis import push_queue
 from talis import dequeue
-from talis import wiki
+from talis import wiki_answer
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                     log.info("Question: {}".format(question))
 
                     threading.Thread(
-                        target=wiki,
+                        target=wiki_answer,
                         args=(data, question, bot_message_queue,),
                         name="wiki consumer thread"
                     ).start()
