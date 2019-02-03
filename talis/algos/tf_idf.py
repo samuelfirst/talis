@@ -55,7 +55,7 @@ class TFIDF(object):
         flat.sort()
         req_tfidf = flat[-2]
         if(req_tfidf == 0):
-            self.response = "I'm sorry, I don't know the answer."
+            self.response = None
         else:
             if (self.sent_tokens[idx] == ""):
                 self.response = (
