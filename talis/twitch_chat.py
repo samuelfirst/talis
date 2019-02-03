@@ -165,7 +165,7 @@ class TwitchChat(threading.Thread):
                     data = json.loads(data)
                     message = data.get('message')
                     self.send_chat_message(message)
-                    log.debug("===Sent chat message {}===\n".format(message))
+                    log.debug("===Sent chat message {}===".format(message))
                 except:
                     raise
                 self.sent += 1
@@ -178,7 +178,7 @@ class TwitchChat(threading.Thread):
         while True:
             try:
                 msg = self.s.recv(4096).decode()
-                log.debug("{}".format(msg))
+                log.debug("{}".format(msg.strip("\r\n")))
             except socket.error as e:
                 err = e.args[0]
                 if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
