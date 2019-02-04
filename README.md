@@ -8,15 +8,25 @@ The general idea of the Bot was the ability to attach and detach "services" to t
 
 The end goal is to generate a bot that can interact and chat like a "real" twitch user using NLP and the ability to attach and detach services on the fly.
 
-This is the next general step into creating a hive mind AI that can attach and disconnect micro-ai services at will.
-
 ***Bot.py*** is the primary script ran inside of the python docker container. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file. This producer pipes the chat messages into a Kafka topic assigned in the .env file.
 
-***AI/spam*** is an example service that attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat.
+***Service: Spam*** is an example service that attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat.
+
+***Service: Wiki*** launching this service will allow chat to send questions to the bot with !q <question>. It will try it's best to parse the subject and return a response. ie. !q what is twitter?
 
 You can view the other scripts in the AI folder.
 
 ![test image size](https://i.imgur.com/6jeuloa.png)
+
+***Service: Commands*** launching this service will allow chat to send commands to the bot with !<command>. It will return a static response based on the input. ie. !git
+
+***Service: Twitch NLP*** launching this service will have the bot talk in chat. You can pass in any DOC (corpus) file. In this case, the default is a Twitch Corpous. It talks like a twitch user. Use --doc-file data/<file> to load a specific doc. A bible doc is also provided to speak the word of god (hehe).
+
+***Service: Clip Producer*** launching this service will have the bot create 10 second clips of the channel by pipping the stream data onto your PC (saves as an MP4). It's currently hooks into the spam service to trigger, but is currently being rewritten.
+
+***Scripts: Send Command*** launching this script will allow you to type from the bot itself. Pass :join: <channel> to force the bot into a channel.
+
+***Scripts: Consumer*** launching these scripts relate to kafka output and testing.
 
 ### To run:
 
@@ -54,6 +64,12 @@ You should see messages piping out to your console.
 ***To test if kafka is receiving the messages:***
 ```
 python ai/consumer_test.py -kh localhost:9092
+```
+
+### Tests:
+
+```
+./run-tests
 ```
 
 ## Todo:
