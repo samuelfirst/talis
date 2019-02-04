@@ -24,7 +24,7 @@ You can view the other scripts in the AI folder.
 
 ### Service: Commands
 
-Launching this service will allow chat to send commands to the bot with ```!<command>```. It will return a static response based on the input. ie. ```!git```
+Launching this service will allow chat to send commands to the bot with ```!<command>```. It will return a static response based on the input. ie. ```!git```. The commands are not dynamic, but will be in the future.
 
 ### Service: Twitch NLP 
 
