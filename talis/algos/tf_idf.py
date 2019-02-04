@@ -17,12 +17,21 @@ class TFIDF(object):
         nltk.download('wordnet')
         self.data = ""
         self.sent_tokens = []
+        self.enable_punc_remove = True
         self.lemmer = nltk.stem.WordNetLemmatizer()
         self.remove_punct_dict = dict(
             (ord(punct), None) for punct in string.punctuation
         )
         self.response = None
 
+    def set_punc_remove(self, value):
+        self.enable_punc_remove = value
+        if self.enable_punc_remove:
+            self.remove_punct_dict = dict(
+                (ord(punct), None) for punct in string.punctuation
+            )
+        else:
+            self.remove_punct_dict = ""
 
     def set_doc(self, doc):
         self.data = doc

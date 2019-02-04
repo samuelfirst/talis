@@ -10,6 +10,7 @@ from cachetools import cached, TTLCache
 def twitch_answer(data, question, bot_message_queue):
     twitch_answer.response = None
     twitch_answer.algo = TFIDF()
+    twitch_answer.algo.set_punc_remove(False)
     twitch_answer.at_threshold = 0.20
 
     # dont think will work..
@@ -33,12 +34,12 @@ def twitch_answer(data, question, bot_message_queue):
     if response is not None:
         r = random.randint(1, 10) / 10
         if r <= twitch_answer.at_threshold:
-            response = ('@' + config.get('TWITCH_CHANNEL') +
+            response = ('@' + data.get('channel') +
               " " + response)
 
         log.info("New Response {}".format(response))
         data_to_send = twitch_schema.as_dict(
-        data.get('channel'),
+            data.get('channel'),
             response
         )
         bot_message_queue.put_nowait(data_to_send)
