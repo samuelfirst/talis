@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # The commands (spam) to send to the botKappa
     log.info("Starting NLP")
     log.info("Using Doc File {}".format(
-        config.get('doc-file', 'data/twitch_doc.txt')
+        config.get('doc-file', 'nlp_docs/twitch_doc.txt')
     ))
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
                             data,
                             twitch_nlp.question,
                             bot_message_queue,
-                            config.get('doc-file', 'data/twitch_doc.txt'),
+                            config.get('doc-file', 'nlp_docs/twitch_doc.txt'),
                         ),
                         name="twitch answer thread"
                     ).start()
