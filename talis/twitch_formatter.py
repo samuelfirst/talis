@@ -33,8 +33,14 @@ class TwitchFormatter(object):
         if len(data) == 1:
             return ""
 
-        data = re.sub(r'^!(.+?)', '', data)
-        data = re.sub(r'\@(.+?) ', '', data)
+        if "[" in data:
+            return ""
+
+        if "]" in data:
+            return ""
+
+        data = re.sub(r'^!(.+)', '', data)
+        data = re.sub(r'\@(.+)', '', data)
         data = re.sub(r' +', ' ', data)
 
         if len(list(data)) == 0:
@@ -46,6 +52,11 @@ class TwitchFormatter(object):
         data = re.sub(r'(summit )', '', data)
         data = re.sub(r'(dan )', '', data)
         data = re.sub(r'(pace )', '', data)
+        data = re.sub(r'!(.+)', '', data)
+        data = re.sub(r'\!$', '', data)
+        data = re.sub(r'\.', '', data)
+        data = re.sub(r'\?$', '', data)
+        data = re.sub(r'\@', '', data)
         data = re.sub(r' +', ' ', data)
         data = data.strip()
         return data
