@@ -2,7 +2,7 @@
 
 Author: Jon Kirkpatrick
 
-A Microservice NLP (Natural Language Processing) Twitch Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
+**A Microservice NLP (Natural Language Processing) Twitch Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.**
 
 The general idea of the Bot was the ability to attach and detach "services" to the bot, at will, and dynamically, without destroying, disconnected and restarting the bot. The bot is highly fault-tolerant, in that the attached services have no "connection" or "knowledge" of the bot, and the bot has no knowledge of the services.
 
@@ -40,13 +40,13 @@ Launching this script will allow you to type from the bot itself. Pass ```:join:
 
 ### Scripts: Consumer
 
-Launching these scripts relate to kafka output and testing. Run consumer_test to test a kafka topic for input and consumer_to_file to save a kafka topic for further DOC processing.
+Launching these scripts relate to kafka output and testing. Run ```consumer_test.py``` to test a kafka topic for input and ```consumer_to_file.py``` to save a kafka topic for further DOC processing.
 
 ### To run:
 
 1. Get an oAuth token for your bot/user using the twitch password generator
-2. place the entire oauth:token text in the .oauth file
-3. update the channel name in the .env folder
+2. place the entire oauth:token text in the .oauth file (ignored with .gitignore)
+3. update the channel name in the .env folder or use the ```-tc <channel>``` argument
 4. Run these commands:
 
 ```
