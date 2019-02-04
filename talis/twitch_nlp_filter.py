@@ -8,6 +8,7 @@ from talis import log
 
 from talis.twitch_formatter import TwitchFormatter
 
+
 class TwitchNLPFilter(object):
     '''
         TODO: Clean up this class. It was for getting
@@ -15,9 +16,9 @@ class TwitchNLPFilter(object):
     '''
     def __init__(self):
         self.seen_messages = 0
-        self.start_time = 0
+        self.start_time = time.time()
         self.messages_sec = 0
-        self.chatter_level = 4
+        self.chatter_level = 8
         self.last_chatter = 0
         self.accuracy = 2
         self.message_bin = []
@@ -28,6 +29,7 @@ class TwitchNLPFilter(object):
     def trigger(self, question):
         self.triggered = True
         self.question = question
+        log.info("Got question {}".format(question))
 
     def reset(self):
         self.message_bin = []
@@ -50,7 +52,14 @@ class TwitchNLPFilter(object):
         self.message_bin.append(msg)
         self.messages_sec = self.processed / (now - self.start_time)
 
-        log.info("{:.02f}".format(self.messages_sec))
+        '''
+        log.info(
+            "{} processed {} time".format(
+                self.processed, now - self.start_time
+            )
+        )
+        '''
+        log.info("{} msg/sec".format(self.messages_sec))
 
         if (
             (len(self.message_bin) >= self.chatter_level) and

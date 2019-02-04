@@ -15,7 +15,7 @@ from talis import log
 from talis import push_queue
 from talis import dequeue
 from talis import twitch_schema
-from talis import twitch_answer
+from talis import nlp_answer
 from talis import TwitchNLPFilter
 
 from kafka import KafkaConsumer
@@ -23,6 +23,10 @@ from kafka import KafkaProducer
 
 if __name__ == "__main__":
     # The commands (spam) to send to the botKappa
+    log.info("Starting NLP")
+    log.info("Using Doc File {}".format(
+        config.get('doc-file', 'data/twitch_doc.txt')
+    ))
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
@@ -60,45 +64,16 @@ if __name__ == "__main__":
                 twitch_nlp.process_message(message)
                 if twitch_nlp.triggered:
                     threading.Thread(
-                        target=twitch_answer,
-                        args=(data, twitch_nlp.question, bot_message_queue,),
+                        target=nlp_answer,
+                        args=(
+                            data,
+                            twitch_nlp.question,
+                            bot_message_queue,
+                            config.get('doc-file', 'data/twitch_doc.txt'),
+                        ),
                         name="twitch answer thread"
                     ).start()
                     twitch_nlp.reset()
-    except (KeyboardInterrupt, SystemExit):
-        stop_event.set()
-        raise
-    except:
-        stop_event.set()
-        raise
-
-
-
-
-
-    # consume a kafka topic
-    twitch_nlp = TwitchNLP(
-        chat_queue,
-        stop_event,
-        json_processor,
-        topic=config.get('KAFKA_TOPIC'),
-        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        auto_offset_reset=config.get('auto_offset_reset', 'latest')
-    )
-    twitch_nlp.algo.subject = "twitch"
-    twitch_nlp.algo.set_doc(twitch_doc)
-
-    # waits for consumer to calculate
-    bot_message_producer = DequeueProducer(
-        chat_queue,
-        bootstrap_servers=config.get('KAFKA_BOOTSTRAP_HOST'),
-        topic=config.get("KAFKA_BOT_MESSAGE_TOPIC")
-    )
-    bot_message_producer.setDaemon(True)
-
-    try:
-        twitch_nlp.start()
-        bot_message_producer.start()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise

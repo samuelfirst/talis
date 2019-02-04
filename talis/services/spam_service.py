@@ -16,6 +16,7 @@ from talis import log
 from talis import push_queue
 from talis import dequeue
 from talis import SpamFilter
+from talis import twitch_schema
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer

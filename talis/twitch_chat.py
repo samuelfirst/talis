@@ -15,6 +15,7 @@ class TwitchChat(threading.Thread):
     def __init__(
         self, username, oauth,
         channel, chat_queue, command_queue,
+        admin_command_queue,
         stop_event
     ):
         threading.Thread.__init__(self)
@@ -29,6 +30,7 @@ class TwitchChat(threading.Thread):
         self.stop_event = stop_event
         self.chat_queue = chat_queue
         self.command_queue = command_queue
+        self.admin_command_queue = admin_command_queue
 
     @staticmethod
     def _logged_in_successful(data):
@@ -110,12 +112,25 @@ class TwitchChat(threading.Thread):
         self._send("PONG")
         log.debug("SENT PONG")
 
+    def leave_channel(self, channel):
+        self.s.send(('PART #%s\r\n' % channel).encode('utf-8'))
+        self.current_channel = None
+        log.info("LEFT {}".format(channel))
+
+    def notify_channel(self, channel):
+        self.leave_channel(self.current_channel)
+        self.join_channel("jonthomask")
+        self.send_chat_message("https://www.twitch.tv/{}".format(channel))
+        self.leave_channel("jonthomask")
+        self.join_channel(channel)
+
     def join_channel(self, channel):
         self.s.send(('JOIN #%s\r\n' % channel).encode('utf-8'))
+        self.current_channel = channel
         log.info("JOINED {}".format(channel))
 
     def send_chat_message(self, message):
-        self._send("PRIVMSG #{0} :{1}".format(self.channel, message))
+        self._send("PRIVMSG #{0} :{1}".format(self.current_channel, message))
 
     def _parse_message(self, data):
         if TwitchChat._check_has_ping(data):
@@ -170,6 +185,19 @@ class TwitchChat(threading.Thread):
                     raise
                 self.sent += 1
                 self.command_queue.task_done()
+
+            while not self.admin_command_queue.empty():
+                data = self.admin_command_queue.get_nowait()
+                if data is None:
+                    return
+                try:
+                    data = json.loads(data)
+                    message = data.get('message')
+                    self.notify_channel(message)
+                    log.debug("===ADMIN JOIN CHANNEL {}===".format(message))
+                except:
+                    raise
+                self.admin_command_queue.task_done()
             time.sleep(0.01)
 
     def twitch_receive_messages(self):

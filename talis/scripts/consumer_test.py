@@ -15,7 +15,7 @@ from kafka import KafkaConsumer
 if __name__ == "__main__":
 
     kafka_consumer = KafkaConsumer(
-        config.get("KAFKA_TOPIC"),
+        config.get("topic", config.get('KAFKA_TOPIC')),
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST"),
         auto_offset_reset=config.get('auto_offset_reset', 'latest')
     )
