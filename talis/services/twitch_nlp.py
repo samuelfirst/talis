@@ -24,7 +24,9 @@ from kafka import KafkaProducer
 if __name__ == "__main__":
     # The commands (spam) to send to the botKappa
     log.info("Starting NLP")
-    log.info("Using Doc File {}".format(config.get('doc-file', 'data/twitch_doc.txt')))
+    log.info("Using Doc File {}".format(
+        config.get('doc-file', 'data/twitch_doc.txt')
+    ))
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
@@ -63,7 +65,12 @@ if __name__ == "__main__":
                 if twitch_nlp.triggered:
                     threading.Thread(
                         target=nlp_answer,
-                        args=(data, twitch_nlp.question, bot_message_queue, config.get('doc-file','data/twitch_doc.txt'),),
+                        args=(
+                            data,
+                            twitch_nlp.question,
+                            bot_message_queue,
+                            config.get('doc-file', 'data/twitch_doc.txt'),
+                        ),
                         name="twitch answer thread"
                     ).start()
                     twitch_nlp.reset()

@@ -8,6 +8,7 @@ from talis import log
 
 from talis.twitch_formatter import TwitchFormatter
 
+
 class TwitchNLPFilter(object):
     '''
         TODO: Clean up this class. It was for getting
@@ -51,7 +52,13 @@ class TwitchNLPFilter(object):
         self.message_bin.append(msg)
         self.messages_sec = self.processed / (now - self.start_time)
 
-        #log.info("{} processed {} time".format(self.processed, now - self.start_time))
+        '''
+        log.info(
+            "{} processed {} time".format(
+                self.processed, now - self.start_time
+            )
+        )
+        '''
         log.info("{} msg/sec".format(self.messages_sec))
 
         if (

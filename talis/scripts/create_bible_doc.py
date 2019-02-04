@@ -11,10 +11,12 @@ from talis import config
 from talis import log
 from talis import BibleFormatter
 
+
 def open_doc(name, code):
     with open(name, code) as file:
         for line in file:
             yield line
+
 
 if __name__ == "__main__":
 
