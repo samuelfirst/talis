@@ -19,7 +19,7 @@ class TwitchNLPFilter(object):
         self.messages_sec = 0
         self.chatter_level = 8
         self.last_chatter = 0
-        self.accuracy = 3
+        self.accuracy = 2
         self.message_bin = []
         self.processed = 0
         self.triggered = False

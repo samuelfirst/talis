@@ -7,33 +7,34 @@ from talis.twitch_schema import twitch_schema
 from talis.algos import TFIDF
 from cachetools import cached, TTLCache
 
-def twitch_answer(data, question, bot_message_queue):
-    twitch_answer.response = None
-    twitch_answer.algo = TFIDF()
-    twitch_answer.algo.set_punc_remove(False)
-    twitch_answer.at_threshold = 0.20
+def nlp_answer(data, question, bot_message_queue, doc_file):
+    nlp_answer.response = None
+    nlp_answer.algo = TFIDF()
+    nlp_answer.algo.set_punc_remove(False)
+    nlp_answer.at_threshold = 0.20
 
     # dont think will work..
     @cached(cache=TTLCache(maxsize=2000000, ttl=600))
-    def load_doc():
+    def load_doc(file_name):
         log.info("Loading DOC File.")
-        file = open('data/twitch_doc.txt', 'r')
-        twitch_answer.algo.set_doc(file.read().split("\n"))
+        print(file_name)
+        file = open(file_name, 'r')
+        nlp_answer.algo.set_doc(file.read().split("\n"))
         file.close()
 
 
-    load_doc()
+    load_doc(doc_file)
     log.info("DOC Loaded.")
 
     try:
-        response = twitch_answer.algo.answer(question)
+        response = nlp_answer.algo.answer(question)
         log.info("Found Response {}".format(response))
     except:
         raise
 
     if response is not None:
         r = random.randint(1, 10) / 10
-        if r <= twitch_answer.at_threshold:
+        if r <= nlp_answer.at_threshold:
             response = ('@' + data.get('channel') +
               " " + response)
 
