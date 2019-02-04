@@ -33,7 +33,8 @@ if __name__ == "__main__":
     kafka_consumer = KafkaConsumer(
         config.get("KAFKA_TOPIC"),
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST"),
-        auto_offset_reset="latest"
+        auto_offset_reset="latest",
+        consumer_timeout_ms=300
     )
 
     kafka_producer = KafkaProducer(
@@ -58,22 +59,35 @@ if __name__ == "__main__":
         kp_thread.start()
         twitch_nlp = TwitchNLPFilter()
         while not stop_event.is_set():
+            twitch_nlp.waiting()
+            data = None
+
             for msg in kafka_consumer:
                 data = json.loads(msg.value)
+                username = data.get('username')
                 message = data.get('message')
-                twitch_nlp.process_message(message)
-                if twitch_nlp.triggered:
-                    threading.Thread(
-                        target=nlp_answer,
-                        args=(
-                            data,
-                            twitch_nlp.question,
-                            bot_message_queue,
-                            config.get('doc-file', 'nlp_docs/twitch_doc.txt'),
-                        ),
-                        name="twitch answer thread"
-                    ).start()
-                    twitch_nlp.reset()
+                twitch_nlp.process_message(username, message)
+
+            # we have no way of dynamically updating
+            # the channel with the :join: channel.. yet
+            if not data:
+                data = twitch_schema.as_dict(
+                    config.get('TWITCH_CHANNEL'),
+                    None
+                )
+
+            if twitch_nlp.triggered:
+                threading.Thread(
+                    target=nlp_answer,
+                    args=(
+                        data,
+                        twitch_nlp.question,
+                        bot_message_queue,
+                        config.get('doc-file', 'nlp_docs/twitch_doc.txt'),
+                    ),
+                    name="twitch answer thread"
+                ).start()
+                twitch_nlp.reset()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
         raise
