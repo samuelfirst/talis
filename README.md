@@ -98,6 +98,7 @@ python ai/consumer_test.py -kh localhost:9092 --topic twitch_messages
 - [ ] utf-8 all over the place, fix
 - [x] Travis
 - [x] Threads: NLP revealed thread issue with multiqueries
+- [ ] Investigate how to save NLP model to improve response time. DOC file is cached, but the TFIDF fitting is not.
 
 ## Feature List:
 - [x] The ability to send the bot to any channel
