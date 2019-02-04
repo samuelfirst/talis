@@ -59,11 +59,11 @@ python ai/consumer_test.py -kh localhost:9092
 ## Todo:
 - [ ] private message response and @response integration
 - [ ] The messages AI/spam.py messages sent to the bot is user input and not escaped properly. Create an interface to filter out piped messages.
-- [ ] Build Kafka Schema for data construction
+- [x] Build Kafka Schema for data construction
 - [ ] utf-8 all over the place, fix
 - [x] Travis
-- [ ] Threads: NLP revealed thread issue with multiqueries
+- [x] Threads: NLP revealed thread issue with multiqueries
 
 ## Feature List:
-- [ ] The ability to send the bot to any channel
-- [ ] Make it learn the word of God
+- [x] The ability to send the bot to any channel
+- [x] Teach it the bible for fun
