@@ -1,6 +1,6 @@
 # Talis
 
-***Author: Jon Kirkpatrick***
+Author: Jon Kirkpatrick
 
 A Microservice NLP (Natural Language Processing) Twitch Bot written in Python 3 that utilizes Docker, Kafka and Zookeeper.
 
@@ -8,25 +8,39 @@ The general idea of the Bot was the ability to attach and detach "services" to t
 
 The end goal is to generate a bot that can interact and chat like a "real" twitch user using NLP and the ability to attach and detach services on the fly.
 
-***Bot.py*** is the primary script ran inside of the python docker container. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file. This producer pipes the chat messages into a Kafka topic assigned in the .env file.
+### Bot.py
 
-***Service: Spam*** is an example service that attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat.
+The primary script ran inside of the python docker container (or localhost with the ```-kh localhost:9092```). You need at least kafka and zookeeper containers launched. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file (or the argument passed with ```-tc <channel>```). This producer pipes the chat messages into a Kafka topic assigned in the .env file.
 
-***Service: Wiki*** launching this service will allow chat to send questions to the bot with !q <question>. It will try it's best to parse the subject and return a response. ie. !q what is twitter?
+#ervice: Spam*** is an example service that attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat.
+
+### Service: Wiki 
+
+Launching this service will allow chat to send questions to the bot with ```!q <question>```. It will try it's best to parse the subject and return a response. ie. ```!q what is twitter?```
 
 You can view the other scripts in the AI folder.
 
 ![test image size](https://i.imgur.com/6jeuloa.png)
 
-***Service: Commands*** launching this service will allow chat to send commands to the bot with !<command>. It will return a static response based on the input. ie. !git
+### Service: Commands
 
-***Service: Twitch NLP*** launching this service will have the bot talk in chat. You can pass in any DOC (corpus) file. In this case, the default is a Twitch Corpous. It talks like a twitch user. Use --doc-file data/<file> to load a specific doc. A bible doc is also provided to speak the word of god (hehe).
+Launching this service will allow chat to send commands to the bot with ```!<command>```. It will return a static response based on the input. ie. ```!git```
 
-***Service: Clip Producer*** launching this service will have the bot create 10 second clips of the channel by pipping the stream data onto your PC (saves as an MP4). It's currently hooks into the spam service to trigger, but is currently being rewritten.
+### Service: Twitch NLP 
 
-***Scripts: Send Command*** launching this script will allow you to type from the bot itself. Pass :join: <channel> to force the bot into a channel.
+Launching this service will have the bot talk in chat. You can pass in any DOC (corpus) file. In this case, the default is a Twitch Corpus. It talks like a twitch user. Use ```--doc-file data/<file>``` to load a specific doc. A bible doc is also provided to speak the word of god (hehe).
 
-***Scripts: Consumer*** launching these scripts relate to kafka output and testing.
+### Service: Clip Producer
+
+Launching this service will have the bot create 10 second clips of the channel by pipping the stream data onto your PC (saves as an MP4). It's currently hooks into the spam service to trigger, but is currently being rewritten.
+
+### Scripts: Send Command
+
+Launching this script will allow you to type from the bot itself. Pass ```:join: <channel>``` to force the bot into a channel. It will join my channel and post the link to where it's going. The notification channel be dynamic in the future.
+
+### Scripts: Consumer
+
+Launching these scripts relate to kafka output and testing. Run consumer_test to test a kafka topic for input and consumer_to_file to save a kafka topic for further DOC processing.
 
 ### To run:
 
@@ -62,8 +76,11 @@ docker logs -f talis_app
 You should see messages piping out to your console.
 
 ***To test if kafka is receiving the messages:***
+
+The topic is option and will default to env ```KAFKA_TOPIC```
+
 ```
-python ai/consumer_test.py -kh localhost:9092
+python ai/consumer_test.py -kh localhost:9092 --topic twitch_messages
 ```
 
 ### Tests:
