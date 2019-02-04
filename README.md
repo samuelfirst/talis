@@ -12,7 +12,9 @@ The end goal is to generate a bot that can interact and chat like a "real" twitc
 
 The primary script ran inside of the python docker container (or localhost with the ```-kh localhost:9092```). You need at least kafka and zookeeper containers launched. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file (or the argument passed with ```-tc <channel>```). This producer pipes the chat messages into a Kafka topic assigned in the .env file.
 
-#ervice: Spam*** is an example service that attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat.
+### Service: Spam 
+
+Launching this service attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat. It basically just spams with chat but can be used to trigger other events like the **Service Clip Producer**
 
 ### Service: Wiki 
 
