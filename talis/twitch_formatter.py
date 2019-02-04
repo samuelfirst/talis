@@ -34,7 +34,7 @@ class TwitchFormatter(object):
             return ""
 
         data = re.sub(r'^!(.+?)', '', data)
-        data = re.sub(r'\@(.+?)', '', data)
+        data = re.sub(r'\@(.+?) ', '', data)
         data = re.sub(r' +', ' ', data)
 
         if len(list(data)) == 0:
@@ -43,6 +43,9 @@ class TwitchFormatter(object):
         data = " ".join(list(OrderedDict.fromkeys(data.split(" "))))
 
         data = re.sub(r'https?:\/\/.*[\r\n]*', '', data)
+        data = re.sub(r'(summit )', '', data)
+        data = re.sub(r'(dan )', '', data)
+        data = re.sub(r'(pace )', '', data)
         data = re.sub(r' +', ' ', data)
         data = data.strip()
         return data

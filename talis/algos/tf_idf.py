@@ -13,32 +13,23 @@ from sklearn.metrics.pairwise import cosine_similarity
 class TFIDF(object):
 
     def __init__(self):
-        nltk.download('punkt')
-        nltk.download('wordnet')
+        nltk.download('punkt', quiet=True)
+        nltk.download('wordnet', quiet=True)
         self.data = ""
         self.sent_tokens = []
-        self.enable_punc_remove = True
         self.lemmer = nltk.stem.WordNetLemmatizer()
+        self.response = None
         self.remove_punct_dict = dict(
             (ord(punct), None) for punct in string.punctuation
         )
-        self.response = None
 
-    def set_punc_remove(self, value):
-        self.enable_punc_remove = value
-        if self.enable_punc_remove:
-            self.remove_punct_dict = dict(
-                (ord(punct), None) for punct in string.punctuation
-            )
-        else:
-            self.remove_punct_dict = ""
-
+    # doc is already in sentence formart
     def set_doc(self, doc):
         self.data = doc
         self.sent_tokens = self.data
 
     # only used if the doc needs sentences
-    # parsed
+    # ..parsed
     def set_data(self, data):
         self.data = data
         self.sent_tokens = nltk.sent_tokenize(self.data)
@@ -67,10 +58,7 @@ class TFIDF(object):
             self.response = None
         else:
             if (self.sent_tokens[idx] == ""):
-                self.response = (
-                    "I'm sorry, I can't find an answer "
-                    "on that page."
-                )
+                self.response = None
             else:
                 self.response = self.sent_tokens[idx]
         self.sent_tokens.remove(input_text.lower())

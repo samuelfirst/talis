@@ -193,6 +193,7 @@ class TwitchChat(threading.Thread):
                 try:
                     data = json.loads(data)
                     message = data.get('message')
+                    # TODO: assuming join command
                     self.notify_channel(message)
                     log.debug("===ADMIN JOIN CHANNEL {}===".format(message))
                 except:
