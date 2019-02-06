@@ -24,7 +24,7 @@ class TwitchNLPFilter(object):
         self.processed = 0
         self.triggered = False
         self.question = None
-        self.max_waiting_time = 90
+        self.max_waiting_time = 25
         self.elapsed_chatter_time = 0
         self.direct_message = False
         self.from_user = None
@@ -48,9 +48,9 @@ class TwitchNLPFilter(object):
         self.direct_message = False
 
     def _get_random_message(self):
-        return self.message_bin[
-            random.randint(0, len(self.message_bin) - 1)
-        ]
+        random_int = random.randint(0, len(self.message_bin) - 1)
+        log.info("Found rand int for message {}".format(random_int))
+        return self.message_bin[random_int]
 
     def waiting(self):
         self.elapsed_chatter_time = time.time()
@@ -73,13 +73,15 @@ class TwitchNLPFilter(object):
     # determines if we should be sending to chat
     def process_message(self, username, message):
         self.from_user = username
+
+        at_ = re.findall(r'\@(\b.+?\b)', message)
+
+        if at_:
+            at_ = at_[0]
+
         msg = TwitchFormatter.format(message)
         if not len(msg):
             return
-
-        at_ = re.match(r'\@(?P<username>(.+))', message)
-        if at_:
-            at_ = at_["username"].strip()
 
         now = time.time()
         self.processed += 1
