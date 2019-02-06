@@ -20,12 +20,11 @@ class TwitchNLPFilter(object):
         self.messages_sec = 0
         self.chatter_level = 15
         self.last_chatter = 0
-        self.accuracy = 2
         self.message_bin = []
         self.processed = 0
         self.triggered = False
         self.question = None
-        self.max_waiting_time = 90
+        self.max_waiting_time = 25
         self.elapsed_chatter_time = 0
         self.direct_message = False
         self.from_user = None
@@ -48,11 +47,16 @@ class TwitchNLPFilter(object):
         self.from_user = None
         self.direct_message = False
 
+    def _get_random_message(self):
+        random_int = random.randint(0, len(self.message_bin) - 1)
+        log.info("Found rand int for message {}".format(random_int))
+        return self.message_bin[random_int]
+
     def waiting(self):
         self.elapsed_chatter_time = time.time()
         if (
             self.elapsed_chatter_time - self.last_chatter >
-            self.max_waiting_time
+            self.max_waiting_time and self.last_chatter != 0
         ):
             if len(self.message_bin):
                 log.info(
@@ -62,22 +66,22 @@ class TwitchNLPFilter(object):
                     )
                 )
                 self.trigger(
-                    self.message_bin[
-                        random.randint(0, len(self.message_bin) - 1)
-                    ],
+                    self._get_random_message(),
                     forced=True
                 )
 
     # determines if we should be sending to chat
     def process_message(self, username, message):
         self.from_user = username
+
+        at_ = re.findall(r'\@(\b.+?\b)', message)
+
+        if at_:
+            at_ = at_[0]
+
         msg = TwitchFormatter.format(message)
         if not len(msg):
             return
-
-        at_ = re.match(r'\@(?P<username>(.+? ))', message)
-        if at_:
-            at_ = at_["username"].strip()
 
         now = time.time()
         self.processed += 1
@@ -96,7 +100,7 @@ class TwitchNLPFilter(object):
             ((now - self.last_chatter) > self.chatter_level)
         ):
             self.direct_message = False
-            self.trigger(self.message_bin[self.chatter_level - self.accuracy])
+            self.trigger(self._get_random_message())
         elif at_ == config.get('TWITCH_NICK'):
             self.direct_message = True
             message = message.strip('@' + config.get('TWITCH_NICK'))

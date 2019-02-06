@@ -12,11 +12,11 @@ The end goal is to generate a bot that can interact and chat like a "real" twitc
 
 The primary script ran inside of the python docker container (or localhost with the ```-kh localhost:9092```). You need at least kafka and zookeeper containers launched. This producer connects to Twitch's IRC server and joins the specified channel located in your .env file (or the argument passed with ```-tc <channel>```). This producer pipes the chat messages into a Kafka topic assigned in the .env file.
 
-### Service: Spam 
+### Service: Spam
 
 Launching this service attaches to the Kafka Topic "twitch_messages" and processes and calculates unique messages in a N-range bin log of recent messages. It will send a message to "bot_messages" on Kafka with what text message the bot should send to chat. It basically just spams with chat but can be used to trigger other events like the **Service Clip Producer**
 
-### Service: Wiki 
+### Service: Wiki
 
 Launching this service will allow chat to send questions to the bot with ```!q <question>```. It will try it's best to parse the subject and return a response. ie. ```!q what is twitter?```
 
@@ -28,7 +28,7 @@ You can view the other scripts in the AI folder.
 
 Launching this service will allow chat to send commands to the bot with ```!<command>```. It will return a static response based on the input. ie. ```!git```. The commands are not dynamic, but will be dynamic in the future.
 
-### Service: Twitch NLP 
+### Service: Twitch NLP
 
 Launching this service will have the bot talk in chat. You can pass in any DOC (corpus) file. In this case, the default is a Twitch Corpus. It talks like a twitch user. Use ```--doc-file data/<file>``` to load a specific doc. A bible doc is also provided to speak the word of god (hehe).
 
@@ -99,6 +99,7 @@ python ai/consumer_test.py -kh localhost:9092 --topic twitch_messages
 - [x] Travis
 - [x] Threads: NLP revealed thread issue with multiqueries
 - [ ] Investigate how to save NLP model to improve response time. DOC file is cached, but the TFIDF fitting is not.
+- [ ] random.randint not thread safe. keeps picking same message.
 
 ## Feature List:
 - [x] The ability to send the bot to any channel
