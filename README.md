@@ -102,5 +102,6 @@ python ai/consumer_test.py -kh localhost:9092 --topic twitch_messages
 - [ ] random.randint not thread safe. keeps picking same message.
 
 ## Feature List:
+- [ ] Connect to twitch stream pipe and process audio for word queues and triggeres
 - [x] The ability to send the bot to any channel
 - [x] Teach it the bible for fun
