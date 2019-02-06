@@ -57,9 +57,6 @@ if __name__ == "__main__":
         name="Kafka Chat Producer"
     )
 
-    # not picked up bot messages quick enough
-    # parse out a consumer to kafka
-    # and sending bot commands
     twitch_chat_producer = TwitchChat(
         config.get('TWITCH_NICK'),
         config.get('TWITCH_OAUTH_TOKEN'),

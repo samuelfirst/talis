@@ -16,7 +16,6 @@ def subject_parser(sentence):
 
     proper_nouns = []
     for token in doc:
-        print(token.string, token.dep_, token.pos_, token.head.pos_)
         if (token.dep == PROPN or token.dep == NOUN):
             proper_nouns.append(token.string)
 
@@ -34,7 +33,6 @@ def subject_parser(sentence):
                     token.pos == PROPN or
                     token.pos == ADJ
                 ) and flag:
-                    print("added {}".format(token_str))
                     proper_nouns.append(token_str)
 
     # search head POS
@@ -47,6 +45,6 @@ def subject_parser(sentence):
         proper_nouns.remove("who")
 
     if len(proper_nouns):
-        log.info("Setting Subject: {}".format(" ".join(proper_nouns)))
+        log.debug("Setting Subject: {}".format(" ".join(proper_nouns)))
         subject = " ".join(proper_nouns)
     return subject

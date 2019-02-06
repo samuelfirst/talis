@@ -1,6 +1,5 @@
 '''
-This AI will provide the ability for the bot to
-connect to a wikipedia article and answer a question
+Use this script to timeout everyone.
 '''
 import queue
 import threading
@@ -14,22 +13,20 @@ from talis import config
 from talis import log
 from talis import push_queue
 from talis import dequeue
-from talis import twitch_schema
-from talis import nlp_answer
-from talis import TwitchNLPFilter
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+from talis import twitch_schema
 
 if __name__ == "__main__":
+    chat_queue = queue.Queue()
     bot_message_queue = queue.Queue()
     stop_event = threading.Event()
 
     kafka_consumer = KafkaConsumer(
         config.get("KAFKA_TOPIC"),
         bootstrap_servers=config.get("KAFKA_BOOTSTRAP_HOST"),
-        auto_offset_reset="latest",
-        consumer_timeout_ms=300
+        auto_offset_reset="latest"
     )
 
     kafka_producer = KafkaProducer(
@@ -52,42 +49,24 @@ if __name__ == "__main__":
 
     try:
         kp_thread.start()
-        twitch_nlp = TwitchNLPFilter()
-
-        log.info("===Started NLP===")
+        users = []
         while not stop_event.is_set():
-            twitch_nlp.waiting()
-            data = None
-
             for msg in kafka_consumer:
                 data = json.loads(msg.value)
                 username = data.get('username')
-                message = data.get('message')
-                twitch_nlp.process_message(username, message)
+                command = data.get('message')
+                if username not in users:
+                    send_to_bot = twitch_schema.as_dict(
+                        data.get('channel'),
+                        "/timeout {}".format(username.lower())
+                    )
+                    log.info("Timed out {}".format(username))
+                    bot_message_queue.put_nowait(send_to_bot)
+                    users.append(username)
 
-            # we have no way of dynamically updating
-            # the channel with the :join: channel.. yet
-            if not data:
-                data = twitch_schema.as_dict(
-                    config.get('TWITCH_CHANNEL'),
-                    None
-                )
-
-            if twitch_nlp.triggered:
-                threading.Thread(
-                    target=nlp_answer,
-                    args=(
-                        data,
-                        twitch_nlp.question,
-                        bot_message_queue,
-                        config.get('doc-file', 'nlp_docs/twitch_doc.txt'),
-                    ),
-                    name="twitch answer thread"
-                ).start()
-                twitch_nlp.reset()
     except (KeyboardInterrupt, SystemExit):
         stop_event.set()
-        raise
+        pass
     except:
         stop_event.set()
         raise
