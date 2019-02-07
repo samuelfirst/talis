@@ -1,9 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-     ENV: test
-
 phases:
   pre_build:
     commands:
@@ -13,7 +9,11 @@ phases:
       - docker pull $IMAGE_REPOSITORY:builder || true
   build:
     commands:
-      - docker build --cache-from $IMAGE_REPOSITORY:builder --target app --tag "${IMAGE_REPOSITORY}:${TAG}" .
+      - docker build -t "${IMAGE_REPOSITORY}:${TAG}" .
   post_build:
     commands:
+      - echo Running post build `date`
+      - echo Docker Images
+      - docker image ls -a
+      - docker run -i ${IMAGE_REPOSITORY}:${TAG} ./run-tests
       - docker push "${IMAGE_REPOSITORY}:${TAG}"

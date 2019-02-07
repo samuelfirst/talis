@@ -1,11 +1,6 @@
+import nltk
 
 from talis import log
-
-try:
-    import nltk
-except:
-    nltk = None
-    log.info("NLTK is not installed. Are we testing?")
 
 
 def is_noun(pos):
