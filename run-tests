@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# python -m virtualenv env
-# source env/bin/activate
-# pip install
-# ./run-tests
-
 clear_trash() {
     local trash='.pytest_cache'
     [ -d "$trash" ] && echo "removing ${trash} testing trash" && rm -rf ${trash} && echo "environment is cleared"
