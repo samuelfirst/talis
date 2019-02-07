@@ -1,6 +1,11 @@
-import nltk
 
 from talis import log
+
+try:
+    import nltk
+except:
+    nltk = None
+    log.info("NLTK is not installed. Are we testing?")
 
 
 def is_noun(pos):
@@ -12,6 +17,7 @@ def subject_parser(sentence):
         Trys to nastily parse a subject
         from a sentence
     '''
+    # todo: add to docker base image
     nltk.download('averaged_perceptron_tagger')
     doc = nltk.word_tokenize(sentence)
     subject = None

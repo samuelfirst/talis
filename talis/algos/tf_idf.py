@@ -1,4 +1,3 @@
-import nltk
 import string
 import re
 import logging
@@ -6,8 +5,19 @@ import logging
 from talis import log
 log.setLevel(logging.INFO)
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+try:
+    import nltk
+except:
+    nltk = None
+    log.info("NLTK is not installed. Are we testing?")
+
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+except:
+    TfidfVectorizer = None
+    cosine_similarity = None
+    log.info("sklearn is not installed. Are we testing?")
 
 
 class TFIDF(object):
