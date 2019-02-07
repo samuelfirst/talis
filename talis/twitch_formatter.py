@@ -33,10 +33,7 @@ class TwitchFormatter(object):
         if len(data) == 1:
             return ""
 
-        if "[" in data:
-            return ""
-
-        if "]" in data:
+        if "[" in data or "]" in data:
             return ""
 
         if "ACTION" in data:

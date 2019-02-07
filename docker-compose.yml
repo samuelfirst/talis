@@ -1,28 +1,22 @@
-version: "3"
-
-volumes:
-    kafka_data:
-    kafka_logs:
-    zookeeper_data:
-    zookeeper_config:
+version: "3.4"
 
 services:
-    # talis_app:
-    #     build:
-    #         context: .
-    #         dockerfile: ./docker/app/Dockerfile
-    #     container_name: talis_app
-    #     ports:
-    #         - "5000:5000"
-    #     depends_on:
-    #         - zookeeper
-    #         - kafka
-    # environment:
-    # WAIT_HOSTS: kafka:9092
-    zookeeper:
+    talis_app:
         build:
             context: .
-            dockerfile: ./docker/zookeeper/Dockerfile
+            target: app
+        image: app:latest
+        container_name: talis_app
+        command: python bot.py
+        ports:
+            - "5000:5000"
+        depends_on:
+            - zookeeper
+            - kafka
+        volumes:
+            - .:/var/www/talis
+    zookeeper:
+        image: jplock/zookeeper
         container_name: zookeeper
         volumes:
             - zookeeper_config:/opt/zookeeper/conf
@@ -30,9 +24,7 @@ services:
         ports:
             - "2181:2181"
     kafka:
-        build:
-            context: .
-            dockerfile: ./docker/kafka/Dockerfile
+        image: ches/kafka
         container_name: kafka
         volumes:
             - kafka_data:/data
@@ -40,9 +32,47 @@ services:
         ports:
             - "7203:7203"
             - "9092:9092"
+        depends_on:
+            - zookeeper
         environment:
             KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
             ZOOKEEPER_IP: ${ZOOKEEPER_IP}
             ZOOKEEPER_PORT: ${ZOOKEEPER_PORT}
             #KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka0:29092,OUTSIDE://localhost:9092
             #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+    talis_wikipedia:
+        build:
+            context: .
+            target: app
+        image: app:latest
+        container_name: talis_wikipedia
+        command: python talis/services/wikipedia_service.py
+        depends_on:
+            - zookeeper
+            - kafka
+    talis_commands:
+        build:
+            context: .
+            target: app
+        image: app:latest
+        container_name: talis_commands
+        command: python talis/services/command_service.py
+        depends_on:
+            - zookeeper
+            - kafka
+    talis_twitch_nlp:
+        build:
+            context: .
+            target: app
+        image: app:latest
+        container_name: talis_twitch_nlp
+        command: python talis/services/twitch_nlp.py
+        depends_on:
+            - zookeeper
+            - kafka
+
+volumes:
+    kafka_data:
+    kafka_logs:
+    zookeeper_data:
+    zookeeper_config:

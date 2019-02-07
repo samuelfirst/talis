@@ -1,0 +1,9 @@
+.DS_Store
+env
+__pycache__
+*.pyc
+.git
+.oauth*
+data/*
+*.mp4
+nohup.out

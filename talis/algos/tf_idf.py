@@ -1,4 +1,3 @@
-import nltk
 import string
 import re
 import logging
@@ -6,15 +5,24 @@ import logging
 from talis import log
 log.setLevel(logging.INFO)
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+try:
+    import nltk
+except:
+    nltk = None
+    log.info("NLTK is not installed. Are we testing?")
+
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+except:
+    TfidfVectorizer = None
+    cosine_similarity = None
+    log.info("sklearn is not installed. Are we testing?")
 
 
 class TFIDF(object):
 
     def __init__(self):
-        nltk.download('punkt', quiet=True)
-        nltk.download('wordnet', quiet=True)
         self.data = ""
         self.sent_tokens = []
         self.lemmer = nltk.stem.WordNetLemmatizer()
@@ -32,7 +40,8 @@ class TFIDF(object):
     # ..parsed
     def set_data(self, data):
         self.data = data
-        self.sent_tokens = nltk.sent_tokenize(self.data)
+        if self.data:
+            self.sent_tokens = nltk.sent_tokenize(self.data)
 
     def LemTokens(self, tokens):
         return [self.lemmer.lemmatize(token) for token in tokens]

@@ -78,6 +78,7 @@ class TwitchNLPFilter(object):
 
         if at_:
             at_ = at_[0]
+            message = message.replace(at_, "")
 
         msg = TwitchFormatter.format(message)
         if not len(msg):
