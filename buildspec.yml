@@ -15,5 +15,5 @@ phases:
       - echo Running post build `date`
       - echo Docker Images
       - docker image ls -a
-      - docker run -it ${IMAGE_REPOSITORY}:${TAG} ./run-tests
+      - docker run -i ${IMAGE_REPOSITORY}:${TAG} ./run-tests
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
