@@ -1,9 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-     ENV: test
-
 phases:
   pre_build:
     commands:
