@@ -12,4 +12,5 @@ phases:
       - docker build --tag "${IMAGE_REPOSITORY}:${TAG}" .
   post_build:
     commands:
+      - docker exec -it ${IMAGE_REPOSITORY}:${TAG} ./run-tests
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
