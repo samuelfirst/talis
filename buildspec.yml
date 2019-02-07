@@ -9,12 +9,11 @@ phases:
       - docker pull $IMAGE_REPOSITORY:builder || true
   build:
     commands:
-      - docker build --tag "${IMAGE_REPOSITORY}:${TAG}" .
+      - docker build -t "${IMAGE_REPOSITORY}:${TAG}" .
   post_build:
     commands:
       - echo Running post build `date`
+      - echo Docker Images
       - docker image ls -a
-      - docker container ls -a
       - docker exec -it ${IMAGE_REPOSITORY}:${TAG} ./run-tests
-      - docker container ls -a
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
