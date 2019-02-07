@@ -1,8 +1,6 @@
-import spacy
+import nltk
 
 from talis import log
-
-from spacy.symbols import nsubj, VERB, PROPN, NOUN, amod, attr, ADJ
 
 
 def subject_parser(sentence):
@@ -10,41 +8,29 @@ def subject_parser(sentence):
         Trys to nastily parse a subject
         from a sentence
     '''
-    nlp = spacy.load('en')
-    doc = nlp(sentence)
+    nltk.download('averaged_perceptron_tagger')
+    is_noun = lambda pos: pos[:2] == 'NN'
+    doc = nltk.word_tokenize(sentence)
     subject = None
+    nouns = []
 
-    proper_nouns = []
-    for token in doc:
-        if (token.dep == PROPN or token.dep == NOUN):
-            proper_nouns.append(token.string)
 
-    if not len(proper_nouns):
-        if ("is" or "was") in sentence:
-            flag = False
-            for token in doc:
-                token_str = token.string.strip()
-                if token_str == "is" or token_str == "was":
-                    flag = not flag
-                    continue
-                if (
-                    token.pos == VERB or
-                    token.pos == NOUN or
-                    token.pos == PROPN or
-                    token.pos == ADJ
-                ) and flag:
-                    proper_nouns.append(token_str)
 
-    # search head POS
-    if not len(proper_nouns):
-        for token in doc:
-            if (token.pos == PROPN or token.pos == NOUN):
-                proper_nouns.append(token.string)
+    if "is" in sentence or "was" in sentence:
+        flag = False
+        for word, pos in nltk.pos_tag(doc):
+            print(word, pos)
+            if (word == "is" or word == "was") and not flag:
+                flag = not flag
+                continue
+            if pos != "." and flag:
+                nouns.append(word)
 
-    if "who" in proper_nouns:
-        proper_nouns.remove("who")
+    if not len(nouns):
+        nouns = [word for (word, pos) in nltk.pos_tag(doc) if is_noun(pos)]
 
-    if len(proper_nouns):
-        log.debug("Setting Subject: {}".format(" ".join(proper_nouns)))
-        subject = " ".join(proper_nouns)
+
+    if len(nouns):
+        log.debug("Setting Subject: {}".format(" ".join(nouns)))
+        subject = " ".join(nouns)
     return subject

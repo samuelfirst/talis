@@ -17,6 +17,9 @@ if __name__ == "__main__":
     log.setLevel(config.log_level())
     log.info("=== Twitch Bot Started ===")
 
+
+    print(config.get("KAFKA_BOOTSTRAP_HOST"))
+
     chat_queue = queue.Queue()
     bot_message_queue = queue.Queue()
     admin_command_queue = queue.Queue()

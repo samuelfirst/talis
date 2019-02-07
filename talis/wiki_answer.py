@@ -35,3 +35,5 @@ def wiki_answer(data, question, bot_message_queue):
         )
         bot_message_queue.put_nowait(data_answer)
         log.info('Wiki processed')
+    else:
+        log.info("No response {}".format(wiki_answer.response))

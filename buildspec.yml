@@ -1,0 +1,17 @@
+version: 0.2
+
+env:
+  variables:
+     ENV: test
+
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login)
+      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+  build:
+    commands:
+      - docker build --target app --tag "${IMAGE_REPOSITORY}:${TAG}" .
+  post_build:
+    commands:
+      - docker push "${IMAGE_REPOSITORY}:${TAG}"
