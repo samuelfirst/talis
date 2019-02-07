@@ -13,7 +13,7 @@ phases:
       - docker pull $IMAGE_REPOSITORY:builder || true
   build:
     commands:
-      - docker build --cache-from $IMAGE_REPOSITORY:builder --tag "${IMAGE_REPOSITORY}:${TAG}" .
+      - docker build --tag "${IMAGE_REPOSITORY}:${TAG}" .
   post_build:
     commands:
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
