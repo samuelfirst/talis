@@ -22,8 +22,6 @@ Launching this service will allow chat to send questions to the bot with ```!q <
 
 You can view the other scripts in the AI folder.
 
-![test image size](https://i.imgur.com/6jeuloa.png)
-
 ### Service: Commands
 
 Launching this service will allow chat to send commands to the bot with ```!<command>```. It will return a static response based on the input. ie. ```!git```. The commands are not dynamic, but will be dynamic in the future.
