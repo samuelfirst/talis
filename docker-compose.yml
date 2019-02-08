@@ -1,10 +1,9 @@
-version: "3.4"
+version: "3.0"
 
 services:
     talis_app:
         build:
             context: .
-            target: app
         image: app:latest
         restart: always
         container_name: talis_app
@@ -43,7 +42,6 @@ services:
     talis_wikipedia:
         build:
             context: .
-            target: app
         image: app:latest
         restart: always
         container_name: talis_wikipedia
@@ -54,7 +52,6 @@ services:
     talis_commands:
         build:
             context: .
-            target: app
         image: app:latest
         restart: always
         container_name: talis_commands
@@ -65,7 +62,6 @@ services:
     talis_twitch_nlp:
         build:
             context: .
-            target: app
         image: app:latest
         restart: always
         container_name: talis_twitch_nlp

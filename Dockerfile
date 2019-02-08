@@ -4,4 +4,5 @@ RUN mkdir -p /var/www/talis
 WORKDIR /var/www/talis
 COPY ./requirements.txt .
 RUN python -m pip install -r requirements.txt
+RUN chmod +x run-tests
 COPY . .
