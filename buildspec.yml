@@ -16,9 +16,7 @@ phases:
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
       - printf '[' >> imagedefinitions.json
       - printf '{"name":"talis_app","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
-      - printf '{"name":"talis_wikipedia","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
       - printf '{"name":"talis_commands","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
-      - printf '{"name":"talis_twitch_nlp","imageUri":"%s"}' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
       - printf ']' >> imagedefinitions.json
 artifacts:
   files:
