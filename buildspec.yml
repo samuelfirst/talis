@@ -14,7 +14,12 @@ phases:
     commands:
       - docker run -i ${IMAGE_REPOSITORY}:${TAG} /bin/ash -c "chmod +x run-tests; ls -al; ./run-tests"
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
-      - printf '[{"name":"talis_app","imageUri":"%s"}]' ${IMAGE_REPOSITORY}:${TAG} > imagedefinitions.json
+      - printf '[' >> imagedefinitions.json
+      - printf '{"name":"talis_app","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
+      - printf '{"name":"talis_wikipedia","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
+      - printf '{"name":"talis_commands","imageUri":"%s"},' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
+      - printf '{"name":"talis_twitch_nlp","imageUri":"%s"}' ${IMAGE_REPOSITORY}:${TAG} >> imagedefinitions.json
+      - printf ']' >> imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
