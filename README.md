@@ -99,7 +99,9 @@ python ai/consumer_test.py -kh localhost:9092 --topic twitch_messages
 - [x] Travis
 - [x] Threads: NLP revealed thread issue with multiqueries
 - [ ] Investigate how to save NLP model to improve response time. DOC file is cached, but the TFIDF fitting is not.
-- [ ] random.randint not thread safe. keeps picking same message.
+- [ ] randint causing race condition
+- [ ] Separate requirements for test
+- [ ] Update run-tests for with docker commands instead (maybe use make?)
 
 ## Feature List:
 - [ ] Connect to twitch stream pipe and process audio for word queues and triggers
