@@ -14,7 +14,7 @@ phases:
     commands:
       - docker run -i ${IMAGE_REPOSITORY}:${TAG} /bin/ash -c "chmod +x run-tests; ls -al; ./run-tests"
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
-      - printf '{"Image":"%s:%s"}' ${IMAGE_REPOSITORY} ${TAG} > build.json
+      - printf '{"Image":"%s:%s"}' ${IMAGE_REPOSITORY} ${TAG} > imagedefinitions.json
 artifacts:
   files:
-    - build.json
+    - imagedefinitions.json
