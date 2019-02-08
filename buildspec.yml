@@ -12,6 +12,5 @@ phases:
       - docker build -t "${IMAGE_REPOSITORY}:${TAG}" .
   post_build:
     commands:
-      - docker run -i ${IMAGE_REPOSITORY}:${TAG} ls -al
-      - docker run -i ${IMAGE_REPOSITORY}:${TAG} ./run-tests
+      - docker run -i ${IMAGE_REPOSITORY}:${TAG} /bin/ash -c "chmod +x run-tests; ls -al; ./run-tests"
       - docker push "${IMAGE_REPOSITORY}:${TAG}"
