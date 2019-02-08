@@ -21,7 +21,6 @@ def subject_parser(sentence):
     if "is" in sentence or "was" in sentence:
         flag = False
         for word, pos in nltk.pos_tag(doc):
-            print(word, pos)
             if (word == "is" or word == "was") and not flag:
                 flag = not flag
                 continue
