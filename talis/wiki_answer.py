@@ -20,7 +20,7 @@ def wiki_answer(data, question, bot_message_queue):
 
         log.info("Received subject {}".format(subject))
         wiki_answer.algo.set_data(wiki_answer.wiki_answer.get_content(subject))
-        log.info("Procsesed subject")
+        log.info("Processed subject")
 
         log.info("Getting Answer")
         wiki_answer.response = wiki_answer.algo.answer(question)
