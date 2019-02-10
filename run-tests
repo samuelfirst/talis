@@ -15,7 +15,7 @@ pip_install() {
 
 run_tests() {
     pip_install
-    pytest --codestyle -p no:warnings -vv tests
+    pytest --codestyle -p no:warnings -vv
     clear_trash
     clear_pyc
 }
