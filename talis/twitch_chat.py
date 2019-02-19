@@ -80,6 +80,7 @@ class TwitchChat(threading.Thread):
         log.debug("Sent PASS and NICK")
 
         received = s.recv(1024).decode()
+        log.debug("{}".format(received.strip("\r\n")))
         if not TwitchChat._logged_in_successful(received):
             raise IOError("Twitch did not accept the username-oauth "
                           "combination")
