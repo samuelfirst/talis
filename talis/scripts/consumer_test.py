@@ -22,5 +22,4 @@ if __name__ == "__main__":
 
     for msg in kafka_consumer:
         data = json.loads(msg.value)
-        message = data.get('message')
-        print(f"{message}")
+        print(msg)

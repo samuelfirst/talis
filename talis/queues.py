@@ -1,4 +1,3 @@
-from talis import log
 
 
 def push_queue(kafka_consumer, talis_queue, stop_event):
