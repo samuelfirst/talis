@@ -1,11 +1,10 @@
-import wikipedia
 import re
 
-from cachetools import cached, TTLCache
+import wikipedia
+from cachetools import TTLCache, cached
 
 
 class Wikipedia(object):
-
     def __init__(self):
         self.raw_data = None
 
@@ -24,12 +23,12 @@ class Wikipedia(object):
 
     def normalize(self):
         self.raw_data = self.raw_data.replace("\n", " ").lower()
-        self.raw_data = re.sub(r'(== .*? ==).+', '', self.raw_data, flags=re.I)
-        self.raw_data = re.sub(r'(=== .*? ===)', '', self.raw_data)
-        self.raw_data = re.sub(r'\(; ', '(', self.raw_data)
-        self.raw_data = re.sub(r'\( ', '(', self.raw_data)
-        self.raw_data = re.sub(r'\(listen\);', '', self.raw_data)
-        self.raw_data = re.sub(r'\[o\.s\.', '', self.raw_data)
-        self.raw_data = re.sub(r'\]', '', self.raw_data)
-        self.raw_data = re.sub(r' +', ' ', self.raw_data)
+        self.raw_data = re.sub(r"(== .*? ==).+", "", self.raw_data, flags=re.I)
+        self.raw_data = re.sub(r"(=== .*? ===)", "", self.raw_data)
+        self.raw_data = re.sub(r"\(; ", "(", self.raw_data)
+        self.raw_data = re.sub(r"\( ", "(", self.raw_data)
+        self.raw_data = re.sub(r"\(listen\);", "", self.raw_data)
+        self.raw_data = re.sub(r"\[o\.s\.", "", self.raw_data)
+        self.raw_data = re.sub(r"\]", "", self.raw_data)
+        self.raw_data = re.sub(r" +", " ", self.raw_data)
         return self.raw_data

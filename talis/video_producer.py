@@ -1,8 +1,7 @@
-import threading
 import os
+import threading
 
 from talis import log
-
 
 # class VideoProducer(threading.Thread):
 #

@@ -1,5 +1,3 @@
-
-
 def push_queue(kafka_consumer, talis_queue, stop_event):
     while not stop_event.is_set():
         for msg in kafka_consumer:

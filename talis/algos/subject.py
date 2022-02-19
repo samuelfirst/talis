@@ -4,16 +4,16 @@ from talis import log
 
 
 def is_noun(pos):
-    return pos[:2] == 'NN'
+    return pos[:2] == "NN"
 
 
 def subject_parser(sentence):
-    '''
-        Trys to nastily parse a subject
-        from a sentence
-    '''
+    """
+    Trys to nastily parse a subject
+    from a sentence
+    """
     # todo: add to docker base image
-    nltk.download('averaged_perceptron_tagger')
+    nltk.download("averaged_perceptron_tagger")
     doc = nltk.word_tokenize(sentence)
     subject = None
     nouns = []

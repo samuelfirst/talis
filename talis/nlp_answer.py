@@ -1,11 +1,11 @@
-import threading
 import random
+import threading
 
-from talis import config
-from talis import log
-from talis.twitch_schema import twitch_schema
+from cachetools import TTLCache, cached
+
+from talis import config, log
 from talis.algos import TFIDF
-from cachetools import cached, TTLCache
+from talis.twitch_schema import TwitchSchema
 
 
 def nlp_answer(data, question, bot_message_queue, doc_file):
@@ -18,7 +18,7 @@ def nlp_answer(data, question, bot_message_queue, doc_file):
     # dont think will work..
     # @cached(cache=TTLCache(maxsize=2000000, ttl=600))
     def load_doc(file_name):
-        file = open(file_name, 'r')
+        file = open(file_name, "r")
         nlp_answer.algo.set_doc(file.read().split("\n"))
         file.close()
 
@@ -45,10 +45,7 @@ def nlp_answer(data, question, bot_message_queue, doc_file):
         #     )
 
         log.info("New Response: {}".format(response))
-        data_to_send = twitch_schema.as_dict(
-            data.get('channel'),
-            response
-        )
+        data_to_send = TwitchSchema.as_dict(data.get("channel"), response)
         bot_message_queue.put_nowait(data_to_send)
     else:
         log.info("No Response found.")

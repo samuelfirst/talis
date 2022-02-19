@@ -1,9 +1,10 @@
-import string
-import re
 import logging
+import string
+
 import nltk
 
 from talis import log
+
 log.setLevel(logging.INFO)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -11,7 +12,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 class TFIDF(object):
-
     def __init__(self):
         self.data = ""
         self.sent_tokens = []
@@ -43,20 +43,17 @@ class TFIDF(object):
 
     def answer(self, input_text):
         self.sent_tokens.append(input_text.lower())
-        TfidfVec = TfidfVectorizer(
-            tokenizer=self.LemNormalize,
-            stop_words='english'
-        )
+        TfidfVec = TfidfVectorizer(tokenizer=self.LemNormalize, stop_words="english")
         tfidf = TfidfVec.fit_transform(self.sent_tokens)
         vals = cosine_similarity(tfidf[-1], tfidf)
         idx = vals.argsort()[0][-2]
         flat = vals.flatten()
         flat.sort()
         req_tfidf = flat[-2]
-        if(req_tfidf == 0):
+        if req_tfidf == 0:
             self.response = None
         else:
-            if (self.sent_tokens[idx] == ""):
+            if self.sent_tokens[idx] == "":
                 self.response = None
             else:
                 self.response = self.sent_tokens[idx]

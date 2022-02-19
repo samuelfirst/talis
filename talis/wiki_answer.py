@@ -1,10 +1,9 @@
 import threading
 
 from talis import log
-from talis.twitch_schema import twitch_schema
-from talis.algos import TFIDF
+from talis.algos import TFIDF, subject_parser
+from talis.twitch_schema import TwitchSchema
 from talis.vendor import Wikipedia
-from talis.algos import subject_parser
 
 
 def wiki_answer(data, question, bot_message_queue):
@@ -29,11 +28,8 @@ def wiki_answer(data, question, bot_message_queue):
         raise
 
     if wiki_answer.response:
-        data_answer = twitch_schema.as_dict(
-            data.get('channel'),
-            wiki_answer.response
-        )
+        data_answer = TwitchSchema.as_dict(data.get("channel"), wiki_answer.response)
         bot_message_queue.put_nowait(data_answer)
-        log.info('Wiki processed')
+        log.info("Wiki processed")
     else:
         log.info("No response {}".format(wiki_answer.response))

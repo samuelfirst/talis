@@ -1,15 +1,13 @@
-'''
+"""
 Use this script to create a twitch doc
 for nlp processing
-'''
+"""
 import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
-from talis import config
-from talis import log
-from talis import BibleFormatter
+from talis import BibleFormatter, config, log
 
 
 def open_doc(name, code):
@@ -22,8 +20,8 @@ if __name__ == "__main__":
 
     bible_formatter = BibleFormatter()
 
-    with open('data/bible_doc.txt', 'w') as doc:
-        for line in open_doc('data/bible.txt', 'r'):
+    with open("data/bible_doc.txt", "w") as doc:
+        for line in open_doc("data/bible.txt", "r"):
             formatted = bible_formatter.format(line)
             if len(formatted):
                 doc.write(formatted + "\n")

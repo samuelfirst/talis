@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import logging
-import time
 import argparse
+import logging
 import os
 import sys
+import time
 
 sys.path.append(os.path.dirname(os.path.realpath(__name__)))
 
@@ -12,16 +12,13 @@ try:
     import cv2
     import streamlink
 except ImportError:
-    sys.stderr.write(
-        "Requires that opencv-python and "
-        "streamlink is installed"
-    )
+    sys.stderr.write("Requires that opencv-python and " "streamlink is installed")
     raise
 
 log = logging.getLogger(__name__)
 
 
-def stream_to_url(url, quality='best'):
+def stream_to_url(url, quality="best"):
     streams = streamlink.streams(url)
     if streams:
         return streams[quality].to_url()
@@ -29,10 +26,10 @@ def stream_to_url(url, quality='best'):
         raise ValueError("No steams were available")
 
 
-def main(url, channel, quality='best', fps=30.0, seconds=10):
+def main(url, channel, quality="best", fps=30.0, seconds=10):
     stream_url = stream_to_url(url, quality)
     log.info("Loading stream {0}".format(stream_url))
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    fourcc = cv2.VideoWriter_fourcc("m", "p", "4", "v")
     cap = cv2.VideoCapture(stream_url)
 
     width = cap.get(3)
@@ -42,7 +39,7 @@ def main(url, channel, quality='best', fps=30.0, seconds=10):
         "{0}-{1}.mp4".format(channel, time.time()),
         fourcc,
         fps,
-        (int(width), int(height))
+        (int(width), int(height)),
     )
 
     diff = 0
@@ -67,15 +64,19 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(
-        description="Face detection on streams via Streamlink")
+        description="Face detection on streams via Streamlink"
+    )
     parser.add_argument("url", help="Stream to play")
     parser.add_argument("channel", help="Stream to play")
-    parser.add_argument("--stream-quality",
-                        help="Requested stream quality [default=best]",
-                        default="best", dest="quality")
-    parser.add_argument("--fps",
-                        help="Play back FPS for opencv [default=30]",
-                        default=30.0, type=float)
+    parser.add_argument(
+        "--stream-quality",
+        help="Requested stream quality [default=best]",
+        default="best",
+        dest="quality",
+    )
+    parser.add_argument(
+        "--fps", help="Play back FPS for opencv [default=30]", default=30.0, type=float
+    )
 
     opts = parser.parse_args()
 

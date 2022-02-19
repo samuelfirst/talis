@@ -1,22 +1,25 @@
-import time
-import socket
-import re
-import fcntl
-import os
 import errno
-import threading
+import fcntl
 import json
+import os
+import re
+import socket
+import threading
+import time
 
 from talis import log
 
 
 class TwitchChat(threading.Thread):
-
     def __init__(
-        self, username, oauth,
-        channel, chat_queue, command_queue,
+        self,
+        username,
+        oauth,
+        channel,
+        chat_queue,
+        command_queue,
         admin_command_queue,
-        stop_event
+        stop_event,
     ):
         threading.Thread.__init__(self)
         self.username = username
@@ -35,11 +38,11 @@ class TwitchChat(threading.Thread):
     @staticmethod
     def _logged_in_successful(data):
         if re.match(
-            r'^:(testserver\.local|tmi\.twitch\.tv)'
-            r' NOTICE \* :'
-            r'(Login unsuccessful|Error logging in'
-            r'|Improperly formatted auth)*$',
-            data.strip()
+            r"^:(testserver\.local|tmi\.twitch\.tv)"
+            r" NOTICE \* :"
+            r"(Login unsuccessful|Error logging in"
+            r"|Improperly formatted auth)*$",
+            data.strip(),
         ):
             return False
         else:
@@ -47,21 +50,25 @@ class TwitchChat(threading.Thread):
 
     @staticmethod
     def _check_has_ping(data):
-        return re.match(
-            r'^PING :tmi\.twitch\.tv$', data)
+        return re.match(r"^PING :tmi\.twitch\.tv$", data)
 
     @staticmethod
     def _check_has_channel(data):
         return re.findall(
-            r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+'
-            r'\.tmi\.twitch\.tv '
-            r'JOIN #([a-zA-Z0-9_]+)$', data)
+            r"^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+"
+            r"\.tmi\.twitch\.tv "
+            r"JOIN #([a-zA-Z0-9_]+)$",
+            data,
+        )
 
     @staticmethod
     def _check_has_message(data):
-        return re.match(r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+'
-                        r'\.tmi\.twitch\.tv '
-                        r'PRIVMSG #[a-zA-Z0-9_]+ :.+$', data)
+        return re.match(
+            r"^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+"
+            r"\.tmi\.twitch\.tv "
+            r"PRIVMSG #[a-zA-Z0-9_]+ :.+$",
+            data,
+        )
 
     def connect(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,20 +77,17 @@ class TwitchChat(threading.Thread):
         try:
             s.connect((connect_host, connect_port))
         except (Exception, IOError):
-            print("Unable to create a socket to %s:%s" % (
-                connect_host,
-                connect_port))
+            print("Unable to create a socket to %s:%s" % (connect_host, connect_port))
             raise  # unexpected, because it is a blocking socket
 
-        s.send(('PASS %s\r\n' % self.oauth).encode('utf-8'))
-        s.send(('NICK %s\r\n' % self.username).encode('utf-8'))
+        s.send(("PASS %s\r\n" % self.oauth).encode("utf-8"))
+        s.send(("NICK %s\r\n" % self.username).encode("utf-8"))
         log.debug("Sent PASS and NICK")
 
         received = s.recv(1024).decode()
         log.debug("{}".format(received.strip("\r\n")))
         if not TwitchChat._logged_in_successful(received):
-            raise IOError("Twitch did not accept the username-oauth "
-                          "combination")
+            raise IOError("Twitch did not accept the username-oauth " "combination")
         else:
             log.debug("Connected. Taking blocking socket into non-blocking")
             fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
@@ -101,7 +105,7 @@ class TwitchChat(threading.Thread):
             if time.time() - self.last_sent_time > 5:
                 try:
                     message = self.buffer.pop(0)
-                    self.s.send(message.encode('utf-8'))
+                    self.s.send(message.encode("utf-8"))
                 finally:
                     self.last_sent_time = time.time()
 
@@ -114,19 +118,19 @@ class TwitchChat(threading.Thread):
         log.debug("SENT PONG")
 
     def leave_channel(self, channel):
-        self.s.send(('PART #%s\r\n' % channel).encode('utf-8'))
+        self.s.send(("PART #%s\r\n" % channel).encode("utf-8"))
         self.current_channel = None
         log.info("LEFT {}".format(channel))
 
     def notify_channel(self, channel):
         self.leave_channel(self.current_channel)
-        self.join_channel("jonthomask")
+        self.join_channel("samuelfirst")
         self.send_chat_message("https://www.twitch.tv/{}".format(channel))
-        self.leave_channel("jonthomask")
+        self.leave_channel("samuelfirst")
         self.join_channel(channel)
 
     def join_channel(self, channel):
-        self.s.send(('JOIN #%s\r\n' % channel).encode('utf-8'))
+        self.s.send(("JOIN #%s\r\n" % channel).encode("utf-8"))
         self.current_channel = channel
         log.info("JOINED {}".format(channel))
 
@@ -141,13 +145,12 @@ class TwitchChat(threading.Thread):
 
         if TwitchChat._check_has_message(data):
             return {
-                'channel': re.findall(r'^:.+![a-zA-Z0-9_]+'
-                                      r'@[a-zA-Z0-9_]+'
-                                      r'.+ '
-                                      r'PRIVMSG (.*?) :',
-                                      data)[0],
-                'username': re.findall(r'^:([a-zA-Z0-9_]+)!', data)[0],
-                'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0]
+                "channel": re.findall(
+                    r"^:.+![a-zA-Z0-9_]+" r"@[a-zA-Z0-9_]+" r".+ " r"PRIVMSG (.*?) :",
+                    data,
+                )[0],
+                "username": re.findall(r"^:([a-zA-Z0-9_]+)!", data)[0],
+                "message": re.findall(r"PRIVMSG #[a-zA-Z0-9_]+ :(.+)", data)[0],
             }
         else:
             return None
@@ -163,11 +166,7 @@ class TwitchChat(threading.Thread):
                 msg = received[0]["message"]
                 channel = received[0]["channel"].replace("#", "")
                 try:
-                    data = {
-                        'channel': channel,
-                        'username': username,
-                        'message': msg
-                    }
+                    data = {"channel": channel, "username": username, "message": msg}
                     self.chat_queue.put_nowait(data)
                     log.info("({0}) {1}: {2}".format(channel, username, msg))
                 except:
@@ -179,7 +178,7 @@ class TwitchChat(threading.Thread):
                     return
                 try:
                     data = json.loads(data)
-                    message = data.get('message')
+                    message = data.get("message")
                     self.send_chat_message(message)
                     log.debug("===Sent chat message {}===".format(message))
                 except:
@@ -193,7 +192,7 @@ class TwitchChat(threading.Thread):
                     return
                 try:
                     data = json.loads(data)
-                    message = data.get('message')
+                    message = data.get("message")
                     # TODO: assuming join command
                     self.notify_channel(message)
                     log.debug("===ADMIN JOIN CHANNEL {}===".format(message))
@@ -217,7 +216,9 @@ class TwitchChat(threading.Thread):
                     self.connect()
                     return result
             else:
-                rec = [self._parse_message(line)
-                       for line in filter(None, msg.split('\r\n'))]
+                rec = [
+                    self._parse_message(line)
+                    for line in filter(None, msg.split("\r\n"))
+                ]
                 rec = [r for r in rec if r]
                 result.extend(rec)

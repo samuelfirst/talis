@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 
-class twitch_schema(NamedTuple):
+class TwitchSchema(NamedTuple):
     channel: str
     message: str
 
